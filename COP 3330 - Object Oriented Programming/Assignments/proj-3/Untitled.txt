@@ -1,0 +1,11 @@
+proj3: program.o bigint.o bigint.h
+        g++ -std=c++11 -o proj3 program.o bigint.o
+
+program.o: program.cpp bigint.h
+        g++ -std=c++11 -c program.cpp
+
+bigint.o: bigint.cpp bigint.h
+        g++ -std=c++11 -c bigint.cpp
+
+clean:
+        rm *.o proj3
