@@ -1,0 +1,15 @@
+a)
+mv file.cpp mycode.cpp
+
+b)
+chmod u-w mycode.cpp
+chmod g-r mycode.cpp
+chmod g+x mycode.cpp
+chmod o+w mycode.cpp
+chmod o+x mycode.cpp
+
+c)
+ls -o
+
+d)
+cp *.ccp ~
