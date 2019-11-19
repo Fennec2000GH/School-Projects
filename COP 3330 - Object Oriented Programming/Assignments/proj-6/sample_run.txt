@@ -1,0 +1,42 @@
+Sample run of Portfolio management program. It includes screen input and output, where the keyboard input start with ">" here to differentiate output from input)
+
+                *** Portfolio Management menu ***
+        I       Import accounts from a file
+        S       Show accounts (brief)
+        E       Export a banking report (to file)
+        M       Show this menu
+        Q       Quit Program
+> i
+Enter filename: test1.txt
+
+> s
+Holder                		         Type             Balance
+
+Alfaro              Emily Grace        	 Savings           900.89
+Morgan              Arthur               Checking           89.00
+Dipwart             Marvin               Investment        688.00
+van Houten          Milhouse             Savings            45.80
+
+> I
+Enter filename: banking.txt
+Invalid file. No data imported
+
+> i
+Enter filename: test2.txt
+
+> s
+Holder                		         Type             Balance
+
+Alfaro              Emily Grace          Savings           900.89
+Morgan              Arthur               Checking           89.00
+Dipwart             Marvin               Investment        688.00
+van Houten          Milhouse             Savings            45.80
+Polar Bear          Maya                 Checking           40.90
+Polar Bear          Maya                 Savings            60.72
+
+> E
+Enter filename: summary.txt
+
+> q
+
+Goodbye!

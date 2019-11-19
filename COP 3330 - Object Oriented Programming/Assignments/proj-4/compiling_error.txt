@@ -1,0 +1,15 @@
+In file included from /Users/fennec2000/Desktop/Files /Coursework/Spring 2019 /COP 3330 - Object Oriented Programming /Assignments/proj-4/test.cpp:3:
+In file included from /Users/fennec2000/Desktop/Files /Coursework/Spring 2019 /COP 3330 - Object Oriented Programming /Assignments/proj-4/Playlist.cpp:3:
+/Users/fennec2000/Desktop/Files /Coursework/Spring 2019 /COP 3330 - Object Oriented Programming /Assignments/proj-4/Playlist.h:32:17: warning: in-class initialization of non-static data member is a C++11 extension [-Wc++11-extensions]
+    Song * list = new Song[5];
+                ^
+/Users/fennec2000/Desktop/Files /Coursework/Spring 2019 /COP 3330 - Object Oriented Programming /Assignments/proj-4/Playlist.h:12:16: error: delegating constructors are permitted only in C++11
+    Playlist():Playlist(""){}   //default constructor is delegated from the second constructor, but with blank listName
+               ^~~~~~~~
+/Users/fennec2000/Desktop/Files /Coursework/Spring 2019 /COP 3330 - Object Oriented Programming /Assignments/proj-4/test.cpp:19:21: warning: range-based for loop is a C++11 extension [-Wc++11-extensions]
+    for(char & item : rat)
+                    ^
+/Users/fennec2000/Desktop/Files /Coursework/Spring 2019 /COP 3330 - Object Oriented Programming /Assignments/proj-4/test.cpp:26:21: warning: range-based for loop is a C++11 extension [-Wc++11-extensions]
+    for(char & item : rat)
+                    ^
+3 warnings and 1 error generated.
