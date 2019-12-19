@@ -1,0 +1,43 @@
+>javac Cowsay.java
+>java Cowsay Hello World!
+
+Hello World! 
+    \
+     \
+      \
+        ^__^
+        (oo)\_______
+        (__)\       )\/\
+            ||----w |
+            ||     ||
+
+>java Cowsay -n kitteh Hello World!
+
+Hello World! 
+    \
+     \
+      \
+       ("`-'  '-/") .___..--' ' "`-._
+         ` *_ *  )    `-.   (      ) .`-.__. `)
+         (_Y_.) ' ._   )   `._` ;  `` -. .-'
+      _.. `--'_..-_/   /--' _ .' ,4
+   ( i l ),-''  ( l i),'  ( ( ! .-'
+
+>java Cowsay -l
+Cows available: heifer kitteh 
+
+>java Cowsay -n ninja Hello world!
+Could not find ninja cow!
+
+>java Cowsay Hello -n kitteh
+
+Hello -n kitteh 
+    \
+     \
+      \
+        ^__^
+        (oo)\_______
+        (__)\       )\/\
+            ||----w |
+            ||     ||
+

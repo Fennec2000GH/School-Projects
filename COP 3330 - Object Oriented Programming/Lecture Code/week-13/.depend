@@ -1,0 +1,2 @@
+main.o: main.cpp shape.h
+shape.o: shape.cpp shape.h

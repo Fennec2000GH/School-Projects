@@ -1,0 +1,4 @@
+EmployeeList.o: EmployeeList.cpp EmployeeList.h Employee.h
+main.o: main.cpp EmployeeList.h Employee.h Utility.h
+Utility.o: Utility.cpp Utility.h
+Employee.o: Employee.cpp Employee.h

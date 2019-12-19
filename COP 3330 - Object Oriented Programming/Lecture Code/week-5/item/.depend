@@ -1,0 +1,2 @@
+main.o: main.cpp item.h
+item.o: item.cpp item.h

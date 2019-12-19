@@ -1,0 +1,37 @@
+
+ Declaring r 
+
+Running GeometricObject default constructor
+Running Two_D_Object default constructor
+Running Rectangle default constructor
+
+
+ Declaring r1 (with parameters) 
+
+Runnning GeometricObject constructor with parameters
+Running Two_D_Object constructor with parameters
+Running Rectangle constructor with parameters
+
+Running Rectangle::draw()
+Running Two_D_Object::draw()
+Running GeometricObject::draw() function
+Finishing Two_D_Object::draw()
+Finishing Rectangle::draw()
+
+
+ Declaring a circle 
+
+Running GeometricObject default constructor
+Running Two_D_Object default constructor
+area = 3.1416
+circumference = 6.2832
+
+Running Circle destructor
+Running Two_D_Object destructor
+Runnning GeometricObject destructor
+Running Rectangle destructor
+Running Two_D_Object destructor
+Runnning GeometricObject destructor
+Running Rectangle destructor
+Running Two_D_Object destructor
+Runnning GeometricObject destructor

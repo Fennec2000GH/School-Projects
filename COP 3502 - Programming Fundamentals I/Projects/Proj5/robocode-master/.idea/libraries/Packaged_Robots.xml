@@ -1,0 +1,14 @@
+<component name="libraryTable">
+  <library name="Packaged Robots">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/Packaged Robots/halloffame.Syndicate_v3.jar!/" />
+      <root url="jar://$PROJECT_DIR$/Packaged Robots/halloffame.RobocodeReckoning_v1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/Packaged Robots/halloffame.EliteFour_v4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/Packaged Robots/halloffame.TeamPlatypus_v1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/Packaged Robots/halloffame.PerryOhioCommunityRowboatTeam_v1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/Packaged Robots/benchmark.TeamSocket_v1.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

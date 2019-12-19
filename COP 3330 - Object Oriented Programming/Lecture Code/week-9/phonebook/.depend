@@ -1,0 +1,3 @@
+directory.o: directory.cpp directory.h entry.h
+entry.o: entry.cpp entry.h
+menu.o: menu.cpp directory.h entry.h

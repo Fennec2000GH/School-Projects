@@ -1,0 +1,2 @@
+circle.o: circle.cpp circle.h
+test.o: test.cpp circle.h

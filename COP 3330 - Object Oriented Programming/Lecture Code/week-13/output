@@ -1,0 +1,134 @@
+c1 Circle info:
+	color = magenta
+	center = (18,21)
+	radius = 53
+
+r1 Rectangle info:
+	color = tan
+	origin = (2,4)
+	dimensions = 7 X 9
+
+c1's area is: 8824.75
+r1's area is: 63
+Shape 0  Circle info:
+	color = black
+	center = (0,0)
+	radius = 1
+
+Shape 1  Circle info:
+	color = black
+	center = (10,20)
+	radius = 100
+
+Shape 2  Circle info:
+	color = red
+	center = (4,-1)
+	radius = 30
+
+Shape 3  Rectangle info:
+	color = blue
+	origin = (0,0)
+	dimensions = 10 X 10
+
+Shape 4  Rectangle info:
+	color = green
+	origin = (5,10)
+	dimensions = 100 X 200
+
+Shape 5  Rectangle info:
+	color = mauve
+	origin = (-5,-20)
+	dimensions = 50 X 40
+
+Shape 6  Circle info:
+	color = black
+	center = (-5,-10)
+	radius = 41
+
+Shape 7  Rectangle info:
+	color = white
+	origin = (1,2)
+	dimensions = 6 X 7
+
+Shape 8  Circle info:
+	color = black
+	center = (0,0)
+	radius = 1
+
+Shape 9  Rectangle info:
+	color = green
+	origin = (2,2)
+	dimensions = 9 X 9
+
+
+**Now using PrintAndArea() funtion**
+
+Shape 0  Circle info:
+	color = black
+	center = (0,0)
+	radius = 1
+
+Shape 0's area is: 3.1416
+
+Shape 1  Circle info:
+	color = black
+	center = (10,20)
+	radius = 100
+
+Shape 1's area is: 31416
+
+Shape 2  Circle info:
+	color = red
+	center = (4,-1)
+	radius = 30
+
+Shape 2's area is: 2827.44
+
+Shape 3  Rectangle info:
+	color = blue
+	origin = (0,0)
+	dimensions = 10 X 10
+
+Shape 3's area is: 100
+
+Shape 4  Rectangle info:
+	color = green
+	origin = (5,10)
+	dimensions = 100 X 200
+
+Shape 4's area is: 20000
+
+Shape 5  Rectangle info:
+	color = mauve
+	origin = (-5,-20)
+	dimensions = 50 X 40
+
+Shape 5's area is: 2000
+
+Shape 6  Circle info:
+	color = black
+	center = (-5,-10)
+	radius = 41
+
+Shape 6's area is: 5281.03
+
+Shape 7  Rectangle info:
+	color = white
+	origin = (1,2)
+	dimensions = 6 X 7
+
+Shape 7's area is: 42
+
+Shape 8  Circle info:
+	color = black
+	center = (0,0)
+	radius = 1
+
+Shape 8's area is: 3.1416
+
+Shape 9  Rectangle info:
+	color = green
+	origin = (2,2)
+	dimensions = 9 X 9
+
+Shape 9's area is: 81
