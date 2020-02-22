@@ -1,0 +1,16 @@
+"/Applications/JetBrains Toolbox/apps/CLion/ch-0/201.4865.10/CLion 2020.1 EAP.app/Contents/bin/cmake/mac/bin/cmake" -DCMAKE_BUILD_TYPE=Debug -DCMAKE_MAKE_PROGRAM=/Library/Developer/CommandLineTools/usr/bin/make -DCMAKE_C_COMPILER=/Library/Developer/CommandLineTools/usr/bin/gcc -DCMAKE_CXX_COMPILER=/Library/Developer/CommandLineTools/usr/bin/gcc -G "CodeBlocks - Unix Makefiles" "/Users/fennec2000/Desktop/Files/College/Coursework/Spring 2020/COP 3530 - Data Structures and Algorithms/Quiz2"
+-- Configuring done
+CMake Error at CMakeLists.txt:6 (add_executable):
+  Cannot find source file:
+
+    main.cpp
+
+  Tried extensions .c .C .c++ .cc .cpp .cxx .cu .m .M .mm .h .hh .h++ .hm
+  .hpp .hxx .in .txx
+
+
+CMake Error at CMakeLists.txt:6 (add_executable):
+  No SOURCES given to target: Quiz2
+
+
+CMake Generate step failed.  Build files cannot be regenerated correctly.
