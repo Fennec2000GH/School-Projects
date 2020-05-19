@@ -1,0 +1,9 @@
+pwd 
+echo $PATH
+cat .gitignore
+mkdir sonnets 
+cd ./sonnets 
+ls 
+cd ..
+mv .gitignore ./sonnets 
+cat -a ./sonnets
