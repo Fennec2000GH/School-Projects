@@ -1,0 +1,183 @@
+---
+title: "Lab 2 Homework"
+author: "Caijun Qin"
+date: "01/29/2021"
+output:
+  html_document:
+    df_print: paged
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+Sys.setenv(PATH = paste(Sys.getenv("PATH"), "C:\\Program Files\\MiKTeX\\miktex\\bin\\x64", sep=.Platform$path.sep)) 
+
+knitr::opts_chunk$set(
+	echo = TRUE,
+	fig.align = "center",
+	message = FALSE,
+	warning = FALSE
+)
+```
+
+**This homework is due on Friday, January 29 2021. Please show all your work and justify your answers.**
+
+1. Create a numerical summary for `height` and `age`, compute the interquartile range for each. Compute the relative frequency distribution for `gender` and `exerany`. How many males are in the sample? What proportion of the sample reports being in excellent health?
+
+Resp: The IQR for `height` and `age` are 6 and 26, respectively. The relative frequencies for `gender` and `exerany` are given as single-row tables. There are 9569 males in the sample. The proportion of the sample with "excellent" health in `genhlth` is 0.23285.
+
+```{r, echo=TRUE, out.width = '55%'}
+source("http://www.openintro.org/stat/data/cdc.R")
+
+print(head(x = cdc, n = 10))
+summary(object = cdc)
+
+# IQR
+height_quantiles <-quantile(x = cdc$height)
+age_quantiles <- quantile(x = cdc$age)
+print("height quantiles:")
+print(height_quantiles)
+print("age_quantiles:")
+print(age_quantiles)
+
+height_iqr <- IQR(x = cdc$height)
+age_iqr <- IQR(x = cdc$age)
+sprintf("height IQR: %f", height_iqr)
+sprintf("age IQR: %f", age_iqr)
+
+assertthat::are_equal(as.numeric(x = height_quantiles[4] - height_quantiles[2]), height_iqr)
+assertthat::are_equal(as.numeric(x = age_quantiles[4] - age_quantiles[2]), age_iqr)
+
+# Relative Frequency Distribution
+gender_table = table(cdc$gender)
+cat("\ntable of frequencies for gender:")
+print(gender_table)
+gender_rel_freq <- gender_table / length(x = cdc$gender)
+cat("\ntable of relative frequencies for gender:")
+print(gender_rel_freq)
+
+exerany_table = table(cdc$exerany)
+cat("\ntable of frequencies for exerany:")
+print(exerany_table)
+exerany_rel_freq <- exerany_table / length(x = cdc$exerany)
+cat("\ntable of relative frequencies for exerany:")
+print(exerany_rel_freq)
+
+# Males in sample
+cat("\nNumber of males in sample: ", gender_table["m"])
+
+# Genhealth statistics
+cat("\nlevels of genhealth:")
+print(levels(x = cdc$genhlth))
+genhealth_table <- table(cdc$genhlth)
+cat("\ntable of frequencies for genhealth:")
+print(genhealth_table)
+cat("\nProportion having excellent health in sample: ", genhealth_table["excellent"] / length(cdc$genhlth))
+
+```
+
+2. What does the following mosaic plot reveal about smoking habits and gender?
+
+Resp: The mosaic plot shows that overall, approximately half of people for each gender smokes. Males smoke only slightly more than females relative to all observations within the same gender.
+
+```{r mosaic-smoke-gender1, eval=FALSE}
+gender_smoke_tb <- table(cdc$gender,cdc$smoke100)
+mosaicplot(gender_smoke_tb)
+```
+
+3. What does the following box plot of BMI vs general health show? Pick another categorical variable from the data set and see how it relates to BMI. List the variable you chose, why you might think it would have a relationship to BMI, and indicate what the figure seems to suggest. 
+
+Resp: The first boxplot shows that as the ordinal rank, as ordered in the sequence of x-labels, is closer to excellent, then `bmi` is lower on average. For this same trend, the variance of `bmi` also shrinks as the general health status is closer to excellent, as visually illustrated by the IQR gap. Another interesting variable to compare to `bmi` is `age`. Since physiology and overall health changes between age groups, this might be a meaningful factor in determining `bmi`. For the corresponding boxplot, `bmi` means (averages) across `age` are roughly constant inside the 20-25 interval. More so than `bmi` vs. `genhlth`, the outliers on the upper end of the boxplot have far greater variance and range. This seems to suggest that `bmi` could vary drastically in a high interval but barely for low values.
+
+```{r boxplot-bmi, eval=FALSE}
+print(head(x = cdc, n = 10))
+bmi <- (cdc$weight / cdc$height^2) * 703
+boxplot(bmi ~ cdc$genhlth)
+boxplot(bmi ~ cdc$age, xlab = "age")
+```
+
+4. Make a scatterplot of weight versus desired weight. Describe the relationship between these two variables.
+
+Resp: The relationship between the two variables is roughly positively linear. As desired weight (`wtdesire`) increases, the actual weight (`weight`) also tends to increase. The strength of the relationship, measured by correlation coefficient, is about 0.8.
+
+```{r, echo=TRUE, out.width = '55%'}
+# Include your code here
+
+print(head(x = cdc, n = 10))
+plot(x =cdc$wtdesire,  y = cdc$weight, col = "gray", cex = 0.5, pch = 7, main = "Comparing Weight Against Desired Weight", xlab = "Desired Weight", ylab = "Weight")
+sprintf("Correlation coefficient: %f", cor(x = cdc$wtdesire, y = cdc$weight))
+
+```
+
+
+5. Let's consider a new variable: the difference between desired weight (`wtdesire`) and current weight (`weight`). Create this new variable by subtracting the two columns in the data frame and assigning them to a new object called `wdiff`.
+
+Resp: 
+
+```{r, echo=TRUE, out.width = '45%'}
+# Include your code here
+print(head(x = cdc, n = 10))
+wdiff <- cdc$wtdesire - cdc$weight
+cat("wdiff data type: ", typeof(x = wdiff))
+cat("\n", is(object = wdiff, class2 = "vector"))
+cat("\nis vector? ", is.vector(x = wdiff))
+cat("\nis list? ", is.list(x = wdiff))
+cat("\nis array? ", is.array(x = wdiff))
+
+cat("\nwdiff dimensions: ", dim(x = wdiff))
+cat("\nwdiff (first 10):\n", wdiff[1:10])
+
+```
+
+6. What type of data is `wdiff`? If an observation `wdiff` is 0, what does this mean about the person`s weight and desired weight. What if `whiff` is positive or negative?
+
+Resp: `wdiff` is a vector of integer elements. A value of 0 in `wdiff` means that the corresponding `weight` and `wtdesired` values are exactly equal. In context, this means any person with a difference of 0 between the desired weight and weight has already achieved the desired goal for weight. A positive value, mathematically having `wtdesired` > `weight`, means that such a person actually has a lower weight currently than his or her target weight. For a negative value, `wtdesired` < `weight` holds true, indicating that such a person has to lose more weight to reach his or her desired weight.
+
+7. Describe the shape of the distribution of `wdiff` include any plots you use. What does this tell us about how people feel about their current weight?
+
+Resp: The frequency distribution of `wdiff` has a roughly bell-curved shape and is approximately normal, although with an extremely small standard deviation (about 24) relative to the range of x-values (from -300 to 500). Most people have associated `wdiff`values with the mean, -10. In simple words, most people need to lose about 10 lbs to reach their desired weights. The number of observations concentrated at the mean is so much that the bin at the mean sticks out over the rest of the bins quite easily.
+
+```{r, echo=TRUE, out.width = '45%'}
+# Include your code here
+print(head(x = cdc, n = 10))
+wdiff_hist <- hist(x = wdiff, breaks = 100, axes = FALSE, xaxt = "n", yaxt = "n", xlim = c(-200, 400), 
+                   ylim = c(0, 20000), col = "green", labels = FALSE, main = "wdiff Frequency Distribution")
+
+# Applying approximated normal curve
+xfit <- seq(min(wdiff), max(wdiff), length = 40) 
+yfit <- dnorm(x = xfit, mean = mean(wdiff), sd = sd(wdiff)) * diff(wdiff_hist$mids[1:2]) * length(wdiff) 
+lines(x = xfit, y = yfit, col = "purple", lwd = 4)
+
+# Axis and grid changes
+axis(side = 1, at = seq(-200, 400, by = 10), las = 1)
+axis(side = 2, at = seq(0, 20000, by = 1000), las = 2)
+grid(col = "blue", lty = 1)
+
+# Computing statistics
+summary(object = wdiff)
+sprintf("variance of wdiff: %f", var(x = wdiff))
+sprintf("standard deviation of wdiff: %f", sd(x = wdiff))
+
+```
+
+
+8. Using numerical summaries and a side-by-side box plot, determine if men tend to view their weight differently than women. Explain.
+
+Resp: For the vast majority of cases, there is not much difference between how men and women view their weights. This is in the context of a similar mean and IQR for both genders. However, outliers for men have much greater variance than outliers for women. This may mean that men set more ambitious target weights that they desire to reach. It may seem that men having more cases for extreme bmi, coupled together with a modest desired weight, could also explain the greater variance of outliers than in women. However, this is not really true. The second boxplot compares bmi based on gender, which shows that even bmi values are distributed almost identically between both genders, even in the outliers. Therefore, men from the sample do not exhibit more extreme bmi values than women. This only leaves really the first suggestion to be plausible, that men set more distant desired weights than their current weights.
+
+```{r, echo=TRUE,out.width = '45%'}
+# Include your code here
+print(head(x = cdc, n = 10))
+
+wdiff_m <- wdiff[cdc$gender == "m"]
+wdiff_f <- wdiff[cdc$gender == "f"]
+cat("\n wdiff summary statistics for males: \n")
+print(summary(wdiff_m))
+cat("\n wdiff summary statistics for females: \n")
+print(summary(wdiff_f))
+
+boxplot(wdiff ~ cdc$gender, xlab = "gender", main = "Weight Difference by Gender")
+
+bmi <- (cdc$weight / cdc$height^2) * 703
+boxplot(bmi ~ cdc$gender, xlab = "gender", main = "BMI vs. Gender")
+```
+
