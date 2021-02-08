@@ -1,0 +1,113 @@
+---
+title: "Chapter 6: Reading Data into R"
+output: html_notebook
+---
+
+6.1 Reading CSVs
+```{r}
+
+theURL <- "http://www.jaredlander.com/data/Tomato%20First.csv"
+tomato <- read.table(file=theURL, header=TRUE, sep=',')
+head(tomato)
+
+x <- 10:1
+y <- -4:5
+q <- c("Hockey", "Football", "Baseball", "Curling", "Rugby", "Lacrosse", "Basketball", "Tennis", "Cricket", "Soccer")
+theDf <- data.frame(First=x, Second=y, Sport=q, stringsAsFactors=FALSE)
+theDf
+theDf$Sport
+
+```
+6.2 Excel Data
+Convert .xslx data into .csv file first, and then use header.table. That is the fastest way. There is also a RODBC package if access to a database via DSN connection is available.
+
+6.3 Reading from Databases
+```{r}
+
+# warning: takes too long and will crash R session
+install.packages("RODBC")
+require('RODBC')
+db <- odbcConnect("QV Training")
+ordersTable <- sqlQuery(db, "SELECT * FROM Orders", stringsAsFactors=FALSE)
+detailsTable <- sqlQuery(db, "SELECT * FROM [Order Details]", stringsAsFactors=FALSE)
+longQuery <- "SELECT * FROM Orders, [Order Details] WHERE Orders.OrderID = [Order Details].OrderID"
+detailsJoin <- sqlQuery(db, longQuery, stringsAsFactors=FALSE)
+
+```
+
+6.4 Data from Other Statistical Tools
+```{r}
+
+# 'foreign' package contains tools and funcitons similar to those in read.table
+install.packages('foreign')
+require('foreign')
+
+# more functions
+read.spss #SASS
+read.dta #Stata
+read.ssd #SAS
+read.octave # Octave
+read.mtp # Minitab
+read.systat # Systat
+
+```
+
+6.5 R Binary Data
+```{r}
+
+fp <- '/Users/fennec2000/OneDrive - University of Florida/Computer Science/Projects/R Projects/R-Crash-Course/src/tomato.rdata'
+save(tomato, file=fp)
+rm(tomato)
+head(tomato)
+load(file=fp, verbose=TRUE)
+head(tomato)
+
+```
+
+```{r}
+
+n <- 20
+r <- 1:10
+w <- data.frame(n, r)
+n
+r
+w
+
+fp <- '/Users/fennec2000/OneDrive - University of Florida/Computer Science/Projects/R Projects/R-Crash-Course/src/multiple.rdata'
+save(w, file=fp)
+rm(n, r, w)
+load(file=fp, verbose=TRUE)
+w
+
+```
+
+6.6 Data Included with R
+```{r}
+
+# some data sets come as default in certain R packages
+require(ggplot2)
+data(x=diamonds)
+head(x=diamonds)
+
+```
+
+6.7 Extract Data from Websites
+6.7.1 Simple HTML Tables
+```{r}
+
+install.packages("XML")
+require(XML)
+theURL <- "http://www.jaredlander.com/2012/02/another-kind-of-super-bowl-pool/"
+bowlPool <- readHTMLTable(theURL, which=1, header=FALSE, stringsAsFactors=FALSE)
+bowlPool
+
+```
+
+6.7.2 Scraping Web Data
+*see section 13.14
+
+
+
+
+
+

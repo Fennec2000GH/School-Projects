@@ -1,0 +1,185 @@
+---
+title: "Cha[ter 5: Advanced Data Structures"
+output: html_notebook
+---
+
+5.1 data.frame
+```{r}
+
+x <- 10:1
+y <- -4:5
+q <- c("Hockey", "Football", "Baseball", "Curling", "Rugby", "Lacrosse", "Basketball", "Tennis", "Cricket", "Soccer")
+theDF <- data.frame(x, y, q)
+theDF
+theDF <- data.frame(First=x, Second=y, Sport=q)
+theDF
+
+```
+
+```{r}
+
+# data frame metadata
+nrow(x=theDF)
+nrow(x=theDF)
+dim(x=theDF)
+names(x=theDF)
+colnames(x=theDF)
+names(x=theDF)[3]
+rownames(x=theDF)
+rownames(x=theDF) <- c("One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten")
+rownames(x=theDF)
+rownames(x=theDF) <- NULL
+rownames(x=theDF)
+head(x=theDF, n=7) # top n entries
+tail(x=theDF) # bottom few entries
+class(x=theDF)
+
+```
+
+```{r}
+
+#selecting entries
+# specify single column
+theDF$Sport
+
+#selecting by indices
+theDF[3, 2] # coordinate (3, 2)
+theDF[3, 2:3] # row 3 and cols 2-3
+theDF[c(3, 5), 2] # rows 3, 5 and col 2
+theDF[c(3, 5), 2:3] # rows 3, 5 and cols 2-3
+theDF[, 3] # col 3 only
+theDF[, 2:3] # cols 2-3 only
+theDF[2, ] # row 2 only
+theDF[2:4, ] # rows 2-4 only
+theDF[, c("First", "Sport")] # cols with specified names only
+theDF["Sport"] # single specified col only
+class(theDF[["Sport"]])
+class(theDF[, "Sport", drop = FALSE])
+
+```
+
+5.3 Lists
+```{r}
+
+# lists can store any data type, and mix them too (Python-like behavior)
+list(1, 2, 3)
+list(c(1, 2, 3)) # note that vector inside is the only element; list has single element
+list3 <- list(c(1, 2, 3), 3:7)
+list3
+list(theDF, 1:10)
+list5 <- list(theDF, 1:10, list3)
+list5
+names(x=list5)
+names(x=list5) <- c("data.frame", "vector", "list")
+list5
+list6 <- list(TheDataFrame = theDF, TheVector = 1:10, TheList = list3) # assigning names
+names(list6)
+
+# empty list
+emptylist <- vector(mode="list", length=4)
+emptylist
+
+```
+
+```{r}
+
+# accessing elements inside list
+list5[[1]]
+list5[["data.frame"]]
+list5[["data.frame"]]$Sport
+list5[[1]][, "Second"]
+list5[[1]][, "Second", drop = FALSE]
+
+```
+
+```{r}
+
+# finding size of lists
+length(x=list5)
+list5[[4]]<- 2 # add 4th unnamed element
+length(x=list5)
+list5[["NewElement"]] <- 3:6 # add 5th named element
+length(list5)
+
+```
+
+5.3 Matrices
+```{r}
+
+A <- matrix(data=1:10, nrow=5, byrow=FALSE, dimnames=NULL)
+A
+B <- matrix(data=21:30, nrow=5, byrow=FALSE, dimnames=NULL)
+B
+C <- matrix(data=21:40, nrow=2, byrow=FALSE, dimnames=NULL)
+C
+
+```
+
+
+```{r}
+
+# matrix metadata
+nrow(x=A)
+ncol(x=A)
+dim(x=A)
+
+```
+
+```{r}
+
+# matrix operations
+"A:"
+A
+"B:"
+B
+"A + B:"
+A + B
+"A - B:"
+A - B
+"A * B:"
+A * B
+"A == B"
+A == B
+"B^T"
+t(x=B)
+"AB"
+A %*% t(x=B)
+"Dimension Error"
+A %*% B # matrix multiply
+
+```
+
+```{r}
+
+colnames(x=A)
+rownames(x=A)
+colnames(x=A) <- c("Left", "Right")
+rownames(x=A) <- c("1st", "2nd", "3rd", "4th", "5th")
+
+colnames(x=B)
+rownames(x=B)
+colnames(x=B) <- c("First", "Second")
+rownames(x=B) <- c("One", "Two", "Three", "Four", "Five")
+
+colnames(x=C)
+rownames(x=C)
+colnames(x=C) <- LETTERS[1:10]
+rownames(x=C) <- c("Top", "Bottom")
+
+t(x=A)
+A %*% C
+
+```
+
+5.4 Arrays
+```{r}
+
+# multi-dimensional vector (numpy-like)
+# note that matrices are restricted to 2 dimensions
+theArray <- array(data=1:12, dim=c(2, 3, 2))
+theArray
+theArray[1, ,]
+theArray[1, ,1]
+theArray[, ,1]
+
+```

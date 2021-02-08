@@ -1,0 +1,127 @@
+---
+title: "Chapter 9: "
+output: html_notebook
+---
+
+9.1 if and else
+```{r}
+
+as.numeric(x=TRUE)
+as.numeric(x=FALSE)
+
+1 == 1 # TRUE
+1 < 1 # FALSE
+1 <= 1 # TRUE
+1 > 1 # FALSE
+1 >= 1 # TRUE
+1 != 1 # FALSE
+
+```
+
+```{r}
+
+toCheck <- 1
+if(toCheck == 1) { 
+  print(x='hello')  
+}
+
+if(toCheck == 0) { 
+  print(x='bye')
+}
+
+check.bool <- function(x) {
+    if(x == 1) { print(x='hello') }
+    else { print(x='bye') }
+}
+
+check.bool(1)
+check.bool(0)
+check.bool('k')
+check.bool(TRUE)
+
+```
+
+```{r}
+
+
+check.bool <- function(x) {
+    if(x==1) { print('hello') } 
+    else if(x==0) { print('goodbye') }
+    else { print('confused') }
+}
+
+check.bool(1)
+check.bool(0)
+check.bool(2)
+check.bool('k')
+
+```
+
+9.2 switch
+```{r}
+
+use.switch <- function(x) {
+  switch(x,
+         "a" = "first",
+         "b" = "second",
+         "c" = "third",
+         "d" = "last",
+         "other")
+}
+
+use.switch("a")
+use.switch("b")
+use.switch("c")
+use.switch("d")
+use.switch("e")
+use.switch("z")
+
+use.switch(1)
+use.switch(2)
+use.switch(3)
+use.switch(4)
+use.switch(5)
+use.switch(6)
+is.null(x=switch(6))
+
+```
+
+9.3 ifelse
+```{r}
+
+# ifelse is ternary operator in traditional programming languages
+ifelse(1 == 1, "Yes", "No")
+ifelse(1 == 0, "Yes", "No")
+
+toTest <- c(1, 1, 0, 1, 0, 1)
+ifelse(toTest == 1, "Yes", "No")
+ifelse(toTest == 1, toTest * 3, "Zero")
+
+# NA is unaffected by any operation
+toTest[2] <- NA
+ifelse(toTest == 1, "Yes", "No")
+ifelse(toTest == 1, toTest * 3, toTest)
+ifelse(toTest == 1, toTest * 3, "Zero")
+
+```
+
+9.4 Compound Tests
+```{r}
+
+# checks over both vectors element-wise
+a <- c(1, 1, 0, 1)
+b <- c(2, 1, 0, 1)
+ifelse(a == 1 & b == 1, "Yes", "No")
+
+# checks only first element of each vector and returns only one value
+ifelse(a == 1 && b == 1, "Yes", "No")
+
+```
+
+
+
+
+
+
+
+

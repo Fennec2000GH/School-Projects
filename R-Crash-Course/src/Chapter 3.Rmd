@@ -1,0 +1,35 @@
+---
+title: "Chapter 3: R Packages"
+output: html_notebook
+---
+
+3.1 Installing Package
+```{r}
+install.packages("coefplot")
+remove.packages("coefplot")
+install.packages("coefplot_1.1.7.zip")
+install.packages("devtools")
+
+# install.packages("datasets")
+# datasets is a base package, and should not be updated
+
+
+```
+3.1.1 Unloading Package
+```{r}
+detach("package:coefplot")
+arm::coefplot(object)
+coefplot::coefplot(object)
+```
+
+3.2 Loading Packages
+```{r}
+require("devtools")
+require("coefplot", quietly=TRUE)
+install_github(repo="coefplot", username="jaredlander")
+
+```
+
+
+
+

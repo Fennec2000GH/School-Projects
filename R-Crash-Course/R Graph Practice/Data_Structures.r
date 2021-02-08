@@ -1,0 +1,40 @@
+#ARRAY
+c1 <- c(1:12)
+arr1 <- array(data = c1, dim = c(6, 2, 4))
+print(arr1)
+
+# result <- apply(x = arr1, margin = 2, fun = sum)
+# print(result)
+
+#FACTOR
+c2 <- c("A", "B", "C", "B", "B", "B")
+print(c2)
+print(table(c2))
+print(is.factor(c2))
+c3 <- factor(c2)
+print(c3)
+print(is.factor(c3))
+levels(c3) <- c(1, 2, 3)
+print(c3)
+print(is.factor(c3))
+c4 <- factor(x = c3, levels = c('!', '@', '#'))
+print(c4)
+print(is.factor(c4))
+
+#DATA FRAMES
+age <- c(13, 14, 15, 16, 17, 18, 18, 18, 19, 19, 20, 20)
+height <- c(5.5, 5.4, 5.6, 5.5, 5.9, 6.0 ,6.7, 6.5, 6.4, 6.2, 6.1, 6.0)
+d1 <- data.frame(age, height)
+d1.rownames = c(1:12)
+print(d1)
+writeLines(text = "Age", sep = "\n")
+print(d1$age)
+writeLines(text = "\nHeight", sep = "\n")
+print(d1$height)
+d1$weight <- seq(from = 10, to = 120, by = 10)
+print(d1)
+print(summary(d1))
+
+d2 <- data.frame(age = 17, height = 5.4, weight = 150)
+d1 <- rbind(d1, d2)
+print(d1)
