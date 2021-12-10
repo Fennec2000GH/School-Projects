@@ -1,0 +1,72 @@
+---
+title: "Ch6 HW"
+author: "Caijun Qin"
+date: "11/2/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+install.packages(c('VGAM'))
+
+```
+
+
+
+```{r, echo = TRUE}
+
+```
+
+Question 16
+
+
+```{r, echo = TRUE}
+
+library(VGAM)
+
+# levels of cholesterol
+A <- c(18, 16, 0, 0, 21, 17, 11, 1)
+B <- c(8, 30, 14, 2, 4, 25, 35, 5)
+C <- c(0, 13, 28, 15, 2, 6, 36, 14)
+D <- c(0, 2, 7, 22, 0, 0, 6, 12)
+
+
+# setup repeating predictor values
+ldl <- c(3, 3.75, 4.5, 5.25)
+End <- rep(ldl, each = 8)
+Begin <- rep(ldl, times = 8) # beginning ldl levels
+Cereal <- rep(rep(c('Control', 'Treatment'), each = 4), times = 4) # whether cereal has psyllium as absent or present
+
+# create dataset
+df <- data.frame(
+  A = A,
+  B = B,
+  C = C,
+  D = D,
+  begin = Begin,
+  cereal = Cereal
+)
+df
+
+# fitting multivariate GLMs
+# beginning LDL treated as quantitative variable
+fit.a <- VGAM::vglm(formula = cbind(A, B, C, D) ~ begin + cereal, data = df, family = cumulative(parallel = TRUE))
+summary(fit.a)
+
+aic.a <- 2 * 5 - 2 * -156.2641 
+aic.a
+
+fit.null <- VGAM::vglm(formula = cbind(A, B, C, D) ~ begin, data = df, family = cumulative(parallel = TRUE))
+VGAM::lrtest(fit.a, fit.null)
+
+aic.b <- 2 * 9 - -156.7082
+aic.b
+
+# beginning LDL treated as qualitative (nominal) variable
+fit.b <- VGAM::vglm(formula = cbind(A, B, C, D) ~ begin + cereal, data = df, family = multinomial)
+summary(fit.b)
+
+fit.null <- VGAM::vglm(formula = cbind(A, B, C, D) ~ begin, data = df, family = multinomial)
+VGAM::lrtest(fit.a, fit.null)
+
+```

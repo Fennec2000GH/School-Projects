@@ -1,0 +1,93 @@
+---
+title: "Ch4 HW"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Install packages.
+
+```{r echo = TRUE}
+
+packages <- c('car', 'dplyr', 'ggplot2', 'lmtest', 'MASS')
+install.packages(packages)
+lapply(packages, library, character.only = TRUE)
+
+```
+Question 2.
+
+```{r echo = TRUE}
+
+LI <- c(8,8,10,10,12,12,12,14,14,14,16,16,16,18,20,20,20,22,22,24,26,28,32,34,38,38,38)
+y <- c(0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,1,0,0,1,1,0,1,1,1,0)
+model <- glm(y ~ LI, family=binomial)
+model_summary <- summary(object = model)
+model_summary
+
+# wald test
+z <- model_summary$coefficients['LI', 'z value']
+z
+cat('\nwald statistic: ', z^2, '\n')
+lmtest::waldtest(object = model)
+
+# wald confidence interval
+ci_wald <- model_summary$coefficients['LI', 'Estimate'] + 1.96 * model_summary$coefficients['LI', 'Std. Error'] * c(-1, 1)
+ci_wald
+ci_wald_odds <- exp(x = ci)
+ci_wald_odds
+
+# profile likelihood confidence interval
+ci_lr <- confint(glm(y ~ LI, family=binomial))['LI', ]
+ci_lr
+ci_lr_odds <- exp(x = ci_lr)
+ci_lr_odds
+
+# LRT test on LI
+car::Anova(mod = model, test = 'LR')
+
+```
+Question 6
+
+```{r echo = TRUE}
+
+
+cat('---------------------------------------------
+\tEstimate Std. Error
+(Intercept) -3.5179 0.7103
+x 0.1054 0.0262
+----------------------------------------------\n')
+
+# significance test
+# wald statistic
+wald_stat <- (0.1054 / 0.0262)^2
+wald_stat
+pchisq(q = wald_stat, df = 1, lower.tail = FALSE)
+
+# wald confidence interval
+ci_wald <- 0.1054 + 1.96 * 0.0262 * c(-1, 1)
+ci_wald
+ci_wald_odds <- exp(x = ci_wald)
+ci_wald_odds
+
+```
+
+Question 12
+
+```{r echo = TRUE}
+
+mbti <- read.table(file = 'http://users.stat.ufl.edu/~aa/intro-cda/data/MBTI.dat', header = TRUE)
+mbti
+
+model <- glm(
+  formula = drink / n ~ factor(x = EI) + factor(x = SN) + factor(x = TF) + factor(x = JP),
+  data = mbti,
+  family = binomial,
+  weights = n
+)
+
+summary(object = model)
+
+```
+
