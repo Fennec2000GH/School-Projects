@@ -1,0 +1,8 @@
+"0",""
+"0","accuracy <- function(clf, X, y) {"
+"0","  predictions <- predict(object = clf, X)"
+"0","  confusion_matrix <- confusionMatrix(data = predictions, y)"
+"0","  accuracy <- confusion_matrix$overall[1]"
+"0","  accuracy"
+"0","}"
+"0",""

@@ -1,0 +1,25 @@
+"0",""
+"0","# Why make Year a factor (categorical variable)?"
+"0","plot(x = Smarket$Year, y = Smarket$Today, data = Smarket)"
+"2","Warning in plot.window(...) :"
+"2"," ""data"" is not a graphical parameter
+"
+"2","Warning in plot.xy(xy, type, ...) :"
+"2"," ""data"" is not a graphical parameter
+"
+"2","Warning in axis(side = side, at = at, labels = labels, ...) :"
+"2","
+ "
+"2"," ""data"" is not a graphical parameter
+"
+"2","Warning in axis(side = side, at = at, labels = labels, ...) :"
+"2","
+ "
+"2"," ""data"" is not a graphical parameter
+"
+"2","Warning in box(...) :"
+"2"," ""data"" is not a graphical parameter
+"
+"2","Warning in title(...) :"
+"2"," ""data"" is not a graphical parameter
+"

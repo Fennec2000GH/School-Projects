@@ -1,0 +1,7 @@
+"0",""
+"0","# Generating indexes for train set"
+"0","train_set <- predictors[1:500,]"
+"0","test_set <- predictors[501:1000,]"
+"0","train_labels <- as.factor(x = y)[1:500]"
+"0","test_labels <- as.factor(x = y)[501:1000]"
+"0",""

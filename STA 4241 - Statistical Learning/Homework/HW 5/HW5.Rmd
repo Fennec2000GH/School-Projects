@@ -1,0 +1,105 @@
+---
+title: "HW5"
+author: "Caijun Qin"
+date: "11/19/2021"
+output: html_document
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  echo = TRUE,
+  warning = FALSE,
+  error = FALSE
+  )
+
+```
+
+Install packages
+
+```{r, echo = TRUE}
+
+r = getOption("repos")
+r["CRAN"] = "http://cran.us.r-project.org"
+options(repos = r)
+
+packages <- c('gam', 'randomForest', 'tree', 'Metrics')
+install.packages(packages)
+lapply(packages, library, character.only = TRUE)
+
+```
+
+Load data
+
+```{r, echo = TRUE}
+
+data.train <- read.csv(file = './Data/Problem3train.csv', header = TRUE)
+data.test <- read.csv(file = './Data/Problem3train.csv', header = TRUE)
+
+```
+
+Question 3a
+
+```{r, echo = TRUE}
+
+tree.obj <- tree(
+  formula = y ~ .,
+  data = data.train,
+  split = 'deviance'
+)
+
+tree.obj
+
+tree.cv <- tree::cv.tree(object = tree.obj, FUN = prune.tree)
+tree.cv$dev
+tree.cv$size # size of 5 corresponds to smallest deviance
+
+tree.pruned <- prune.tree(tree = tree.obj, k = 5)
+plot(tree.pruned)
+
+tree.pred <- predict(object = tree.pruned, newdata = data.test)
+tree.mse <- Metrics::mse(actual = data.test$y, predicted = tree.pred)
+tree.mse
+
+```
+
+The prediction error (MSE) for decision tree on test data set is 1.910123.
+
+Question 3b
+
+```{r, echo = TRUE}
+
+rf.obj <- randomForest::randomForest(
+  formula = y ~ .,
+  data = data.train,
+  mtry = ncol(x = data.train) - 1,
+  ntree = 1000
+)
+
+rf.pred <- predict(object = rf.obj, newdata = data.test)
+rf.mse <- Metrics::mse(actual = data.test$y, predicted = rf.pred)
+rf.mse
+
+rf.tree.diff <- tree.mse - rf.mse
+rf.tree.diff
+
+```
+
+The prediction error (MSE) for bagging (random forest) on test data set is 0.4404094, outperforming a single decision tree by 1.469714.
+
+Question 3c
+
+```{r, echo = TRUE}
+
+gam.obj <- gam::gam(
+  formula = y ~ s(x1, 4) + s(x2, 4) + s(x3, 4) + s(x4, 4) + s(x5, 4) + s(x6, 4) + s(x7, 4) + s(x8, 4) + s(x9, 4) + s(x10, 4), 
+  data = data.train
+)
+
+gam.pred <- predict(object = gam.obj, newdata = data.test)
+gam.mse <- Metrics::mse(actual = data.test$y, predicted = gam.pred)
+gam.mse
+
+```
+
+The prediction error (MSE) for GAM on test data set is 0.9799886.
+

@@ -1,0 +1,354 @@
+---
+title: "HW 1"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Installing necessary packages.
+
+```{r, echo=TRUE, out.width='45%'}
+
+packages <- c('ISLR', 'car', 'class', 'caret', 'e1071', 'klaR', 'comprehenr')
+install.packages(packages)
+lapply(X = packages, FUN = library, character.only = TRUE)
+
+```
+
+Question 2 data loading
+
+```{r, echo=TRUE}
+
+# Setting paths
+setwd(dir='D:/Users/qcaij/OneDrive - University of Florida/Files/College/Coursework/Fall 2021/STA4241 - Statistical Learning/Homework/HW 1/')
+load(file.path(getwd(), 'Data/Problem2.dat'))
+
+# Loading data
+x1 <- data$x1
+x2 <- data$x2
+xrandom <- data$xrandom
+y <- data$y
+
+# Forming useful dataframes
+prob2 <- data.frame('x1' = x1, 'x2' = x2, 'y' = y)
+predictors <- prob2[1:2]
+
+head(x = x1)
+head(x = x2)
+head(x = y)
+
+
+head(prob2)
+# rm(list=ls())
+
+## Now load data set
+data(Smarket)
+
+## look at data
+head(Smarket)
+
+```
+Question 2 a (train-test-split)
+
+```{r, echo = TRUE}
+
+# Generating indexes for train set
+train_set <- predictors[1:500,]
+test_set <- predictors[501:1000,]
+train_labels <- as.factor(x = y)[1:500]
+test_labels <- as.factor(x = y)[501:1000]
+
+```
+
+Question 2 a (useful functions)
+
+```{r, echo = TRUE}
+
+# Computing Bayes error rate for each specific observation, then computing average error rates for train and test sets
+
+# Functions for computing posterior probability and Bayes error rate per observation 
+known_posterior <- function(x1, x2) pnorm(q = 0.5*x1 - 0.4*x2)
+
+max_class_prob <- function(x1, x2) {
+  label_1_posterior <- known_posterior(x1 = x1, x2 = x2)
+  max(label_1_posterior, 1 - label_1_posterior)
+}
+
+# bayes error rate functions based on "known" posterior probability of Y | X 
+bayes_error_rate <- function(x1, x2) {
+  1 - max_class_prob(x1 = x1, x2 = x2)
+}
+
+overall_bayes_error_rate <- function(vec1, vec2) {
+  expected_posterior <- mapply(FUN = max_class_prob, vec1, vec2)
+  1 - mean(x = expected_posterior)
+}
+
+# Overall bayes error rate for a classifier, computed from a confusion matrix
+overall_ber_clf <- function(clf, X, y, echo = TRUE) {
+  # Predicted labels
+  predictions <- predict(object = clf, X)
+  if (echo) cat('\nPredicted labels:\n', head(x = predictions))
+  
+  # Confusion matrices 
+  confusion_matrix <- confusionMatrix(data = predictions, y)
+  if (echo) {
+    print('\nConfusion matrix:\n')
+    print(confusion_matrix)
+  }
+  
+  # Accuracy
+  accuracy <- confusion_matrix$overall[1]
+  if (echo) cat('\nAccuracy:\n', accuracy)
+
+  # Overall Bayes error rate  
+  overall_ber <- 1 - as.double(x = accuracy)
+  if (echo) cat('\nOverall Bayes error rate:\n', overall_ber)
+  overall_ber
+}
+
+```
+
+Question 2 a i
+
+
+```{r, echo = TRUE}
+
+
+train_bayes_error_rates <- mapply(FUN = bayes_error_rate, train_set$x1, train_set$x2)
+train_overall_bayes_error_rate <- overall_bayes_error_rate(vec1 = train_set$x1, vec2 = train_set$x2)
+cat('\nBayes error rates for train set:\n', head(x = train_bayes_error_rates), '...')
+cat('\nOverall Bayes error rate:\n', train_overall_bayes_error_rate)
+
+test_bayes_error_rates <- mapply(FUN = bayes_error_rate, test_set$x1, test_set$x2)
+test_overall_bayes_error_rate <- overall_bayes_error_rate(vec1 = test_set$x1, vec2 = test_set$x2)
+cat('\nBayes error rates for test set:\n', head(x = test_bayes_error_rates), '...')
+cat('\nOverall Bayes error rate:\n', test_overall_bayes_error_rate)
+
+```
+
+Question 2 a ii
+
+```{r, echo = TRUE}
+
+# Naive Bayes algorithm, without knowing the true posterior conditional probability
+nb_clf <- train(
+  x = train_set,
+  y = train_labels,
+  method = 'nb',
+  metric = 'Accuracy'
+)
+
+print('Naive Bayes Classifier details:\n')
+print(nb_clf)
+
+cat('\nTrain set:\n')
+overall_ber_clf(clf = nb_clf, X = train_set, y = train_labels)
+
+cat('\nTest set:\n')
+overall_ber_clf(clf = nb_clf, X = test_set, y = test_labels)
+
+```
+
+Question 2 a iii
+
+```{r, echo = TRUE}
+
+# KNN algorithm with k = 3 (no tuning)
+knn_clf <- train(
+  x = train_set,
+  y = train_labels,
+  method = "knn",
+  metric = "Accuracy",
+  preProcess = c("center","scale"),
+  tuneGrid = data.frame('k' = 3)
+)
+
+print('KNN Classifier details:\n')
+print(knn_clf)
+
+cat('\nTrain set:\n')
+overall_ber_clf(clf = knn_clf, X = train_set, y = train_labels)
+
+
+cat('\nTest set:\n')
+overall_ber_clf(clf = knn_clf, X = test_set, y = test_labels)
+
+```
+
+Question 2 a v
+
+
+```{r, echo = TRUE}
+
+accuracy <- function(clf, X, y) {
+  predictions <- predict(object = clf, X)
+  confusion_matrix <- confusionMatrix(data = predictions, y)
+  accuracy <- confusion_matrix$overall[1]
+  accuracy
+}
+
+```
+
+```{r, echo = TRUE}
+
+knn_test_error_rates <- to_vec(expr = 
+for (k in c(1:10)) {
+  knn_clf <- train(
+    x = train_set,
+    y = train_labels,
+    method = "knn",
+    metric = "Accuracy",
+    preProcess = c("center","scale"),
+    tuneGrid = data.frame('k' = k)
+  )
+  
+  overall_ber_clf(clf = knn_clf, X = test_set, y = test_labels, echo = FALSE)
+}
+)
+
+plot(x = c(1:10), y = knn_test_error_rates, type = 'line', title = 'Overall Bayes Error Rate vs. k', xlab = 'k', ylab = 'Test Error Rate')
+
+```
+
+Use much wider range of values for k in hyperparameter tuning.
+
+```{r, echo = TRUE}
+
+# KNN algorithm with tuning (k = 1, 2, ..., 100)
+# Objective is to determine best value of k and corresponding metrics
+knn_clf_tuned <- train(
+  x = train_set,
+  y = train_labels,
+  method = "knn",
+  metric = "Accuracy",
+  preProcess = c("center","scale"),
+  tuneGrid = data.frame('k' = c(1:100))
+)
+
+print('Tuned KNN Classifier details:\n')
+print(knn_clf_tuned)
+
+
+cat('\nTrain set:\n')
+overall_ber_clf(clf = knn_clf_tuned, X = train_set, y = train_labels)
+
+
+cat('\nTest set:\n')
+overall_ber_clf(clf = knn_clf_tuned, X = test_set, y = test_labels)
+
+```
+
+Question 2 a vii
+
+```{r, echo = TRUE}
+cat('\nHead of xrandom:\n', head(x = xrandom))
+cat('\nLength of xrandom:\n', length(x = xrandom))
+
+predictors_with_xrandom <- cbind(predictors, xrandom)
+train_set_with_xrandom <- predictors_with_xrandom[1:500,]
+test_set_with_xrandom <- predictors_with_xrandom[501:1000, ]
+
+# KNN algorithm with k = 40 and using x1, x2, and 20 xrandom predictors
+knn_clf <- train(
+  x = train_set_with_xrandom,
+  y = train_labels,
+  method = "knn",
+  metric = "Accuracy",
+  preProcess = c("center","scale"),
+  tuneGrid = data.frame('k' = 40)
+)
+
+print('KNN Classifier details:\n')
+print(knn_clf)
+
+
+cat('\nTrain set:\n')
+overall_ber_clf(clf = knn_clf, X = train_set_with_xrandom, y = train_labels)
+
+
+cat('\nTest set:\n')
+overall_ber_clf(clf = knn_clf, X = test_set_with_xrandom, y = test_labels)
+
+```
+Question 3 (about the data used)
+
+```{r, echo = TRUE}
+
+head(x = Smarket)
+
+# Gets rid of the categorical covariate 'Direction' temporarily
+Smarket_quant <- Smarket[! names(x=Smarket) %in% c('Direction')]
+head(x = Smarket_quant)
+
+```
+
+Question 3 a ii
+
+```{r, echo=TRUE}
+
+# Why make Year a factor (categorical variable)?
+plot(x = Smarket$Year, y = Smarket$Today, data = Smarket)
+
+# Defining full and reduced models
+cat('\nFull model:\n')
+model_full <- lm(formula = Today ~ Lag1 + Lag2 + Lag3 + Lag4 + Lag5 + factor(x = Year) + Volume, data = Smarket)
+summary(object = model_full)
+anova(object = model_full)
+
+cat('\nReduced model:\n')
+model_reduced <- lm(formula = Today ~ 0, data = Smarket)
+summary(object = model_full)
+anova(object = model_full)
+
+```
+
+Question 3 a iii
+
+```{r, echo=TRUE}
+
+# Linear model with Lag1, with regression df = 3
+model_3 <- lm(formula = Today ~ Lag1 + factor(x = Year)^2 + Volume^3, data = Smarket)
+summary(object = model_3)
+anova(object = model_3)
+
+```
+
+Question 3 b 
+```{r, echo=TRUE}
+
+# Generating indexes for train set
+trainIndex <- createDataPartition(Smarket$Direction, p = 0.50, list = FALSE, times = 1)
+cat('Train set size: ', length(x = trainIndex))
+
+train_set <- Smarket_quant[trainIndex, ]
+test_set <- Smarket_quant[-trainIndex, ]
+train_labels <- Smarket$Direction[trainIndex]
+test_labels <- Smarket$Direction[-trainIndex]
+
+head(x = train_set)
+head(x = test_set)
+head(x = train_labels)
+head(x = test_labels)
+
+# KNN algorithm with tuning (k = 1, 2, ..., 100)
+knn_clf <- train(
+  x = train_set,
+  y = train_labels,
+  method = "knn",
+  metric = "accuracy",
+  preProcess = c("center","scale"),
+  tuneGrid = data.frame('k' = c(1:100))
+)
+
+print(x = knn_clf)
+
+plot(knn_clf)
+
+```
+
+```{r, echo=TRUE}
+
+```

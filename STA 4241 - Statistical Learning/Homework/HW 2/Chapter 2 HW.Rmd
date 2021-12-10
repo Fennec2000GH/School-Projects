@@ -1,0 +1,484 @@
+---
+title: "Chapter 2 HW"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Load packages.
+
+```{r echo = TRUE, error = FALSE}
+
+options(repos = list(CRAN="http://cran.rstudio.com/"))
+packages <- c('caret', 'ggplot2', 'MASS', 'plyr')
+install.packages(packages)
+lapply(X = packages, FUN = library, character.only = TRUE)
+
+```
+
+Question 2.
+
+```{r echo = TRUE}
+
+# loading data
+prob2 <- read.csv(file = 'data/Problem2.csv')
+
+# squaring covariates
+prob2$X1.squared <- prob2$X1^2
+prob2$X2.squared <- prob2$X2^2
+prob2
+
+# creating models
+logistic.linear <- glm(formula = Y ~ X1 + X2, data = prob2, family = binomial)
+logistic.squared <- glm(formula = Y ~ X1.squared + X2.squared, data = prob2, family = binomial)
+lda.model <- lda(formula = Y ~ X1 + X2, data = prob2)
+qda.model <- qda(formula = Y ~ X1 + X2, data = prob2)
+
+# printing model objects
+cat('\n', rep(x = '-', times = 20), '\n')
+cat('\nlogistic.linear:\n')
+cat('\n', rep(x = '-', times = 20), '\n')
+logistic.linear
+
+cat('\n', rep(x = '-', times = 20), '\n')
+cat('\nlogistic.squared:\n')
+cat('\n', rep(x = '-', times = 20), '\n')
+logistic.squared
+
+cat('\n', rep(x = '-', times = 20), '\n')
+cat('\nlda.model:\n')
+cat('\n', rep(x = '-', times = 20), '\n')
+lda.model
+
+cat('\n', rep(x = '-', times = 20), '\n')
+cat('\nqda.model:\n')
+cat('\n', rep(x = '-', times = 20), '\n')
+qda.model
+
+```
+
+Summaries of models.
+
+```{r echo = TRUE}
+
+cat('\n', rep(x = '-', times = 20), '\n')
+cat('\nLogistic regression with linear covariates:\n')
+cat('\n', rep(x = '-', times = 20), '\n')
+summary(object = logistic.linear)
+
+cat('\n', rep(x = '-', times = 20), '\n')
+cat('\nLogistic regression with squared covariates:\n')
+cat('\n', rep(x = '-', times = 20), '\n')
+summary(object = logistic.squared)
+
+cat('\n', rep(x = '-', times = 20), '\n')
+cat('\nLDA:\n')
+cat('\n', rep(x = '-', times = 20), '\n')
+summary(object = lda.model)
+
+cat('\n', rep(x = '-', times = 20), '\n')
+cat('\nQDA:\n')
+cat('\n', rep(x = '-', times = 20), '\n')
+summary(object = qda.model)
+
+```
+Question 2i
+
+Setup for plotting predicted outcomes.
+
+```{r echo = TRUE}
+
+# spacing
+linspace_num <- seq(-3, 3, 0.1)
+ticks <- seq(-3, 3, 0.5)
+grid <- expand.grid(X1 = linspace_num, X2 = linspace_num)
+
+```
+
+
+```{r echo = TRUE}
+
+logistic.linear.pred <- 1 * (predict(logistic.linear, grid, type = 'response') > 0.5)
+ggplot(data = grid, aes(x = X1, y = X2, color = as.factor(logistic.linear.pred))) +
+  geom_point() + 
+  scale_x_continuous(breaks = ticks) + 
+  scale_y_continuous(breaks = ticks) +
+  ggtitle(label = 'Logistic Regression (Linear Covariates)') + 
+  scale_color_manual(values = c('green', 'blue'), guide = 'none')
+
+```
+
+```{r echo = TRUE}
+
+grid.2 <- expand.grid(X1 = seq(0, 3, 0.1), X2 = seq(-3, 3, 0.1))
+logistic.squared.pred <- 1 * (predict(glm(formula = Y ~ I(X1^2) + I(X2^2), data = prob2, family = binomial), grid.2, type = 'response') > 0.5) - 1
+
+ggplot(data = grid.2, aes(x = X1, y = X2, color = as.factor(logistic.squared.pred))) +
+  geom_point() + 
+  scale_x_continuous(breaks = ticks) + 
+  scale_y_continuous(breaks = ticks) +
+  ggtitle(label = 'Logistic Regression (Squared Covariates)') + 
+  scale_color_manual(values = c('green', 'blue'), guide = 'none')
+
+```
+
+```{r echo = TRUE}
+
+lda.pred <- as.numeric(x = predict(lda.model, grid)$class) - 1
+ggplot(data = grid, aes(x = X1, y = X2, color = as.factor(x = lda.pred))) +
+  geom_point() + 
+  scale_x_continuous(breaks = ticks) + 
+  scale_y_continuous(breaks = ticks) +
+  ggtitle(label = 'LDA') + 
+  scale_color_manual(values = c('green', 'blue'), guide = 'none')
+
+```
+
+```{r echo = TRUE}
+
+qda.pred <- as.numeric(x = predict(qda.model, grid)$class)
+ggplot(data = grid, aes(x = X1, y = X2, color = as.factor(qda.pred))) +
+  geom_point() + 
+  scale_x_continuous(breaks = ticks) + 
+  scale_y_continuous(breaks = ticks) +
+  ggtitle(label = 'QDA') + 
+  scale_color_manual(values = c('green', 'blue'), guide = 'none')
+
+```
+Question 2ii
+
+The first evident observation is the use of curved boundaries by logistic regression with squared covariates and QDA. Interestingly, both the logistic regression with linear terms and LDA seem to agree on the same boundary. At this stage, it is unclear whether any model exhibits overfitting just based on visual displays. The two models that use nonlinear boundaries may be closer to overfitting than the other two models simply due to curvature of boundaries wrapping around class data points. Furthermore, QDA is prone to variance, meaning adding new data points will be very sensitive to the positioning of boundaries.
+
+Question 2iii
+
+```{r echo = TRUE}
+
+# load test dataset
+prob2.test <- read.csv(file = 'data/Problem2test.csv')
+prob2.test
+
+```
+
+
+```{r echo = TRUE}
+
+err.rate.logistic.func <- function(model, data_test) {
+  pred <- 1 * (predict(model,data_test, type = 'response') > 0.5) - 1
+  ct  <- table(data_test$Y, pred)
+  1 - sum(diag(prop.table(ct)))
+}
+
+err.rate.discriminant.func <- function(model, data_test) {
+  pred <- as.numeric(predict(model,data_test)$class) - 1
+  ct  <- table(data_test$Y, pred)
+  1 - sum(diag(prop.table(ct)))
+}
+
+cat('\nError rates per model:\n')
+print(err.rate.logistic.func(model = logistic.linear, data_test = prob2.test))
+print(err.rate.logistic.func(model = glm(formula = Y ~ I(X1^2) + I(X2^2), data = prob2, family = binomial), data_test = prob2.test))
+print(err.rate.discriminant.func(model = lda.model, data_test = prob2.test))
+print(err.rate.discriminant.func(model = qda.model, data_test = prob2.test))
+
+```
+The models ranked from lowest to highest in error rates are logistic regression w/ linear covariates, LDA, QDA, and logistic regression w/ squared covariates. The top 2 models are very close in error rate and together suggest that the two classes are quite linearly separable.
+
+Question 3
+
+```{r echo = TRUE}
+
+# loading data
+prob3 <- read.csv(file = 'data/Problem3.csv')
+prob3
+
+# creating models
+lda.model.prob3 <- lda(formula = Y ~ X1 + X2, data = prob3)
+qda.model.prob3 <- qda(formula = Y ~ X1 + X2, data = prob3)
+
+# printing model objects
+cat('\n', rep(x = '-', times = 20), '\n')
+cat('\nlda.model.prob3:\n')
+cat('\n', rep(x = '-', times = 20), '\n')
+lda.model.prob3
+
+cat('\n', rep(x = '-', times = 20), '\n')
+cat('\nqda.model.prob3:\n')
+cat('\n', rep(x = '-', times = 20), '\n')
+qda.model.prob3
+
+```
+
+Summaries of models.
+
+```{r echo = TRUE}
+
+cat('\n', rep(x = '-', times = 20), '\n')
+cat('\nLDA:\n')
+cat('\n', rep(x = '-', times = 20), '\n')
+summary(object = lda.model.prob3)
+
+cat('\n', rep(x = '-', times = 20), '\n')
+cat('\nQDA:\n')
+cat('\n', rep(x = '-', times = 20), '\n')
+summary(object = qda.model.prob3)
+
+```
+
+Question 3i.
+
+```{r echo = TRUE}
+
+lda.pred.prob3 <- as.numeric(x = predict(lda.model.prob3, grid)$class) - 1
+
+ggplot(data = grid, aes(x = X1, y = X2, color = as.factor(x = lda.pred.prob3))) +
+  geom_point() + 
+  scale_x_continuous(breaks = ticks) + 
+  scale_y_continuous(breaks = ticks) +
+  ggtitle(label = 'LDA')
+
+```
+
+```{r echo = TRUE}
+
+qda.pred.prob3 <- as.numeric(x = predict(qda.model.prob3, grid)$class) - 1
+ggplot(data = grid, aes(x = X1, y = X2, color = as.factor(x = qda.pred.prob3))) +
+  geom_point() + 
+  scale_x_continuous(breaks = ticks) + 
+  scale_y_continuous(breaks = ticks) +
+  ggtitle(label = 'QDA')
+
+```
+
+Question 3ii
+
+```{r echo = TRUE}
+
+# load test dataset
+prob3.test <- read.csv(file = 'data/Problem3test.csv')
+prob3.test
+
+```
+LDA with 4 classes
+
+```{r echo = TRUE}
+
+# assess the accuracy of the prediction
+lda.pred.test.prob3 <- as.numeric(x = predict(lda.model.prob3, prob3.test)$class) - 1
+length(x = lda.pred.test.prob3)
+
+# analysis
+cat('\n', rep(x = '-', times = 20), '\n')
+cat('\nConfusion Matrix:\n')
+cat('\n', rep(x = '-', times = 20), '\n')
+ct <- table(prob3.test$Y, lda.pred.test.prob3)
+ct
+
+cm <- confusionMatrix(data = factor(lda.pred.test.prob3), reference = factor(prob3.test$Y))
+cm
+
+cat('\n', rep(x = '-', times = 20), '\n')
+cat('\nDiagonal (Correct Predictions):\n')
+cat('\n', rep(x = '-', times = 20), '\n')
+diag(prop.table(ct, 1))
+
+cat('\n', rep(x = '-', times = 20), '\n')
+cat('\nAccuracy and Error Rate:\n')
+cat('\n', rep(x = '-', times = 20), '\n')
+acc.prob3 <- sum(diag(prop.table(ct)))
+err.prob3 <- 1 - sum(diag(prop.table(ct)))
+acc.prob3
+err.prob3
+
+```
+QDA with 4 classes
+
+```{r echo = TRUE}
+
+# assess the accuracy of the prediction
+qda.pred.test.prob3 <- as.numeric(x = predict(qda.model.prob3, prob3.test)$class) - 1
+length(x = qda.pred.test.prob3)
+
+# assess
+cat('\n', rep(x = '-', times = 20), '\n')
+cat('\nConfusion Matrix:\n')
+cat('\n', rep(x = '-', times = 20), '\n')
+ct <- table(prob3.test$Y, qda.pred.test.prob3)
+ct
+
+cm.prob3 <- confusionMatrix(data = factor(qda.pred.test.prob3), reference = factor(prob3.test$Y))
+cm.prob3
+
+cat('\n', rep(x = '-', times = 20), '\n')
+cat('\nDiagonal (Correct Predictions):\n')
+cat('\n', rep(x = '-', times = 20), '\n')
+diag(prop.table(ct, 1))
+
+cat('\n', rep(x = '-', times = 20), '\n')
+cat('\nAccuracy and Error Rate:\n')
+cat('\n', rep(x = '-', times = 20), '\n')
+acc.prob3 <- sum(diag(prop.table(ct)))
+err.prob3 <- 1 - sum(diag(prop.table(ct)))
+acc.prob3
+err.prob3
+
+```
+For both LDA and QDA, the error rates are a small margin above half (0.56 and 0.5953, correspondingly). QDA actually performed slightly less accurately than LDA. The dataset may have linearly separable classes, and/or the dataset size may be too small to alleviate noticeable effects of variance for QDA. But these points are only speculation. As expected with a higher error rate, QDA had lower sensitivity or recall for all classes except slightly better with the 3rd class when comparing to LDA via confusion matrices. 
+
+
+```{r echo = TRUE}
+
+# class sizes
+for (class in 0:3) {
+  cat('\nClass ', class, ' size: ', length(x = prob3.test[prob3.test$Y == class, ]$Y), '\n')
+}
+
+library(dplyr)
+class.size <- prob3.test %>% count(Y)
+class.size$prop <- prop.table(x = class.size)$n
+class.size$err <- 1 - class.size$prop
+class.size
+
+```
+
+Question 3 iii
+
+Simply having an error rate > 0.50 should not be immediately interpreted as being awful performance. From the cell above, each class has a much higher chance of misclassification than 0.50 based on random guessing with account of class sizes. Keep in mind that > 0.50 can be interpreted as worse than random guessing for binary cases of equal class sizes, but the problem at hand has 4 classes with no class consuming over half of all data points.
+
+Question 3 iv
+
+Assuming that class sizes are all equal; that is, each class holds 0.25 of all data points. By randomly guessing, there would still be a 0.75 to 0.25 odds of misclassifying as opposed to correctly classifying an instance regardless of class. With an error rate of ~60%, QDA still outperforms random guessing with equal class sizes by a substantial margin.
+
+Question 4
+
+Question 4i
+
+Steps to run simulation study, with code right after.
+
+1. Determine the number of simulations to run and the dataset sizes per simulation. Each simulation will iterate through the same sequence of monotonically increasing data sizes. For this case, there will be 100 simulations, and the dataset sizes generated per simulation goes from 100 to 2000 in increments of 100, visually as 100, 200, 300, ..., 2000. 
+
+2. Create two 100 x 20 matrices initialized with zeros (0), one for LDA error rates (`'lda.err`) and another for QDA error rates (`qda.err`). Rows correspond to simulations, and columns correspond to increasing dataset sizes.
+
+3. For simulation `i` and dataset `size`:
+a. Generate `size` independent random values using the standard normal distribution for the `X1` covariate. Repeat the same procedure for the `X2` covariate. Bind both vectors of generated values as columns inside the same dataframe (called `data`).
+
+b. For all corresponding pairs of (`X1`, `X2`), compute a probability `p` = e^X1 + e^(0.5 * X2). Generate a label (either 0 or 1) as a Bernoulli trial with `p`. This should produce a vector `Y` containing `size` corresponding labels. Bind `Y` as a new column in `data`.
+
+c. Split `data` into 2 equally sized halves with into train and test sets with no overlapping indexes from the original dataframe. The rows of `data` are randomly dispersed into the 2 datasets. Let the new datasets be `train.set` and `test.set`.
+
+d. Instantiate LDA model with `train.set` and follow the same formula used in part b. Note the nonlinear combination of both covariates. Predict with `test.set` and compute a confusion matrix from the predicted labels and originally generated labels for rows in `test.set`. Compute the error rate from confusion matrix. Save the error rate as entry indexed (`i`, `j`) in `lda.err` for i^th simulation `i` and j^th dataset size.
+
+e. Repeat part d but replace the instantiated model with QDA and the matrix of saved error rates with with `qda.err`.
+
+4. Find the mean of error rates columnwise for `lda.err` and `qda.err`. This leaves a vector of 20 averaged error rates, aligned with each dataset size, by compacting across all 100 simulations for both types of discriminant analyses.
+
+5. Plot both mean vectors from part 4 in the same figure.
+
+```{r echo = TRUE}
+
+# metadata
+n = 1:20 * 100 # monotonically increasing dataset size
+n.sim = 100 # number of simulations (trials)
+model.formula <- Y ~ exp(x = X1) + exp(x = 0.5 * X2)
+model.formula.func <- 0
+
+expit = function(x) {
+  exp(x = x) / (1 + exp(x = x))
+}
+
+lda.err <- matrix(data = 0, nrow = n.sim, ncol = length(x = n))
+qda.err <- matrix(data = 0, nrow = n.sim, ncol = length(x = n))
+
+# each simulation or trial
+for(i in 1:n.sim) {
+  
+  # each differently sized dataset per simulation
+  for(j in 1:length(x = n)) {
+    
+    # Setup for both LDA and QDA
+    # generating data
+    size <- n[j] # size of dataset
+    data <- data.frame(X1 = rnorm(n = size), X2 = rnorm(n = size))
+    p <- expit(x = exp(data$X1) - exp(0.5 * data$X2))
+    data$Y = rbinom(n = n, size = 1, p = p)
+
+    # train test split
+    train.index <- caret::createDataPartition(y = data$Y, list = FALSE)
+    train.set <- data[train.index,]
+    test.set <- data[-train.index,]
+
+    # LDA
+    # model and prediction
+    lda.model.prob4 <- MASS::lda(formula = model.formula, data = train.set)
+    lda.pred.test.prob4 <- as.numeric(x = predict(lda.model.prob4, test.set)$class) - 1
+    # evaluation
+    ct <- table(test.set$Y, lda.pred.test.prob4)
+    acc.prob4 <- sum(diag(prop.table(ct)))
+    err.prob4 <- 1 - sum(diag(prop.table(ct)))
+    lda.err[i, j] <- err.prob4
+
+    # QDA
+    # model and prediction
+    qda.model.prob4 <- MASS::qda(formula = model.formula, data = train.set)
+    qda.pred.test.prob4 <- as.numeric(x = predict(qda.model.prob4, test.set)$class) - 1
+    # evaluation
+    ct <- table(test.set$Y, qda.pred.test.prob4)
+    acc.prob4 <- sum(diag(prop.table(ct)))
+    err.prob4 <- 1 - sum(diag(prop.table(ct)))
+    qda.err[i, j] <- err.prob4
+  }
+  
+}
+
+```
+
+```{r echo = TRUE}
+
+# verifying and averaging error rate data over all simulations
+cat('\n', rep(x = '-', times = 20), '\n')
+cat('\nModel error rates:\n')
+cat('\n', rep(x = '-', times = 20), '\n')
+as.data.frame(x = lda.err)
+as.data.frame(x = qda.err)
+
+cat('\n', rep(x = '-', times = 20), '\n')
+cat('\nModel error rates means across dataset sizes:\n')
+cat('\n', rep(x = '-', times = 20), '\n')
+lda.colMeans <- colMeans(x = lda.err)
+qda.colMeans <- colMeans(x = qda.err)
+prob4.err <- as.data.frame(x = cbind('lda.err.means' = lda.colMeans, 'qda.err.means' = qda.colMeans, 'size' = n))
+prob4.err
+
+```
+
+Question 4ii
+
+QDA outperformed LDA by an increasing difference as the dataset size increased. QDA is more susceptible to variance than LDA. However, this is mended more and more as the amount of data points increases. For very large datasets, QDA can be preferred over LDA. LDA suffers more from bias and nonlinear truth. On the other hand, QDA relaxes the assumption of equal variances between classes and fares better at discriminating between classes that truly share nonlinear boundaries. The formula plugged into the `expit` function to generate Y includes exponential terms. This naturally gives edge to QDA, which can create curved boundaries to accomodate nonlinearity from the formula.
+
+Question 4iii
+
+Please refer to dataframe generated by `prob4.err` in the most recent cell to compare QDA and LDA error rates side by side along increasing dataset size.
+
+Question 4iv
+
+As dataset size increases, QDA performs with increasing accuracy (or decreasing error rate) relative to LDA. Having more data points also makes QDA less susceptible to new data points added, noting that variance is its weakness. A plot of error rates for both LDA and QDA can illustrate this trend.
+
+```{r echo = TRUE}
+
+ggplot(data = prob4.err, aes(x = size)) + 
+  geom_point(aes(y = lda.err.means, color = 'green')) + 
+  geom_point(aes(y = qda.err.means, color = 'blue')) + 
+  geom_smooth(
+    method = lm,
+    se = FALSE,
+    fullrange = TRUE,
+    aes(y = lda.err.means, color = 'green')) +
+  geom_smooth(
+    method = lm,
+    se = FALSE,
+    fullrange = TRUE,
+    aes(y = qda.err.means, color = 'blue')) +
+  scale_color_manual(labels = c('QDA Error Rate', 'LDA Error Rate'), values = c('green', 'blue'))
+
+```

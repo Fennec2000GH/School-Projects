@@ -1,0 +1,160 @@
+---
+title: "HW 4"
+author: "Caijun Qin"
+date: "11/10/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo = TRUE,
+  error = TRUE # do not interrupt in case of errors
+)
+```
+
+Install packages.
+
+```{r, echo = TRUE}
+
+packages <- c('factoextra', 'glmnet', 'Metrics', 'pls')
+install.packages(packages)
+lapply(packages, library, character.only = TRUE)
+
+```
+
+Question 1
+
+```{r, echo = TRUE}
+
+# soft thresholding function
+soft <- function(x, lambda) {
+  max(abs(x = x) - lambda) * sign(x = x)
+}
+
+lasso.cd <- function(X, Y, lambda, tol = 1e-3) {
+  p <- ncol(x = X)
+  beta.tilde <- rep(x = 1, times = p)
+  # print(beta.tilde)
+  
+  r <- Y - X %*% beta.tilde
+  # print(r)
+  
+  beta.delta <- 1e3
+  beta.tilde.old <- beta.tilde
+  
+  while (beta.delta > tol) {
+    for (j in 1:p) {
+      r_j <- r + X[, j] * beta.tilde[j]
+      x <- t(x = r_j) %*% X[, j] / (t(x = X[, j]) %*% X[, j])
+      beta.plus <- soft(x = x, lambda = lambda)
+      beta.tilde[j] <- beta.plus
+      r <- r_j - X[, j] * beta.tilde[j]
+    }
+    
+    # change in estimated beta in this iteration compared to previous iteration
+    beta.delta <- sum(abs(x = beta.tilde - beta.tilde.old))
+    # print(beta.delta)
+  }
+  beta.tilde
+}
+
+```
+
+part i.
+
+```{r, echo = TRUE}
+
+lasso.cd(X = x, Y = y, lambda = 0.5, tol = 45)
+
+```
+
+part ii.
+
+```{r, echo = TRUE}
+
+glmnet.model <- glmnet::glmnet(x = x, y = y, intercept = FALSE, lambda = 0.5)
+coef(object = glmnet.model)
+
+```
+
+The first coefficient is extremely close, and the second coefficient is somewhat close with at least matching sign. According to the glmnet model, most coefficients after the second are sparse i.e. pretty much zero. The custom coefficients from coordinate descent does not indicate this as well with the current tolerance level for convergence.
+
+Question 2
+
+```{r, echo = TRUE}
+
+# reading in data
+data <- read.csv(file = './Data/Problem1.csv', header = TRUE)
+x <- as.matrix(x = data[,1:52])
+y <- as.numeric(x = data[,53])
+
+load(file = './Data/Problem2train.dat')
+load(file = 'Data/Problem2test.dat')
+
+x.train <- as.matrix(x = dataTrain[, 1:204])
+y.train <- as.matrix(x = dataTrain[, 205])
+x.test <- as.matrix(x = dataTest[, 1:204])
+y.test <- as.matrix(x = dataTest[, 205])
+
+```
+
+```{r, echo = TRUE}
+
+cor.matrix <- stats::cor(x = x, y = x)
+stats::heatmap(x = cor.matrix)
+
+```
+
+```{r, echo = TRUE}
+
+pca.obj <- prcomp(x = x)
+factoextra::fviz_eig(pca.obj)
+
+```
+
+```{r, echo = TRUE}
+
+# LASSO regression
+lasso.cv <- glmnet::cv.glmnet(x = x.train, y = y.train, alpha = 0, lambda = 1:1000)
+lasso.model <- glmnet::glmnet(x = x.train, y = y.train, alpha = 0, lambda = lasso.cv$lambda.min)
+lasso.pred <- glmnet::predict.glmnet(object = lasso.model, newx = x.test, type = 'response')
+Metrics::mse(actual = y.test, predicted = lasso.pred)
+
+# ridge regression
+ridge.cv <- glmnet::cv.glmnet(x = x.train, y = y.train, alpha = 1, lambda = seq(0.0, 1.0, by = 0.0001))
+ridge.model <- glmnet::glmnet(x = x.train, y = y.train, alpha = 1, lambda = ridge.cv$lambda.min)
+ridge.pred <- glmnet::predict.glmnet(object = ridge.model, newx = x.test, type = 'response')
+Metrics::mse(actual = y.test, predicted = ridge.pred)
+pcr.model$residuals
+
+# PCA regression with no. of components chosen by CV
+pcr.model <- pls::pcr(formula = y.train ~ x.train, center = TRUE, scale = TRUE, validation = 'CV')
+# summary(object = pcr.model) # 125 components recommended by CV
+pcr.pred <- predict(object = pcr.model, newdata = x.test, ncomp = 125)
+Metrics::mse(actual = y.test, predicted = as.vector(x = pcr.pred))
+
+# PCA regression with minimum no. of components to contain 95% explained variance
+pca.results <- stats::prcomp(x = x.train, center = TRUE, scale. = TRUE)
+stats::heatmap(x = stats::cor(x = pca.results$x, y = pca.results$x))
+pca.sum <- summary(object = pca.results)
+component.index <- which(as.vector(x = pca.sum$importance['Cumulative Proportion', ] < 0.95) == FALSE)[1] # number of top components with cumulative explained variance >= 0.95
+pcr.95.model <- pls::pcr(formula = y.train ~ x.train, center = TRUE, scale = TRUE)
+pcr.95.pred <- predict(object = pcr.95.model, newdata = x.test, ncomp = component.index)
+Metrics::mse(actual = y.test, predicted = as.vector(x = pcr.95.pred))
+
+# PLS regression with components chosen by CV
+pls.model <- pls::plsr(y.train ~ x.train, center = TRUE, scale = TRUE, validation = 'CV')
+# summary(object = pls.model) # 125 components recommended by CV
+pls.pred <- predict(object = pls.model, newdata = x.test, ncomp = 125)
+Metrics::mse(actual = y.test, predicted = as.vector(x = pls.pred))
+
+# ElasticNet regression
+en.cv <- glmnet::cv.glmnet(x = x.train, y = y.train, alpha = 0.5, lambda = 1:1000)
+en.model <- glmnet::glmnet(x = x.train, y = y.train, alpha = 0.5, lambda = en.cv$lambda.min)
+en.pred <- glmnet::predict.glmnet(object = en.model, newx = x.test, type = 'response')
+Metrics::mse(actual = y.test, predicted = en.pred)
+
+```
+
+Based on MSE, ridge regression performed the worst, and PCA regression with 95% explained variance performed the best.
+

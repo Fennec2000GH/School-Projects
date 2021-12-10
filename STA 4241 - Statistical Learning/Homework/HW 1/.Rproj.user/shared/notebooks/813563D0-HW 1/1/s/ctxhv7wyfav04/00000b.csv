@@ -1,0 +1,4 @@
+"0",""
+"0","# Gets rid of the categorical covariate 'Direction' temporarily"
+"0","Smarket_quant <- Smarket[! names(x=Smarket) %in% c('Direction')]"
+"0","head(x = Smarket_quant)"

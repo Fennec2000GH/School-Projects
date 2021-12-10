@@ -1,0 +1,669 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+]{article}
+\usepackage{amsmath,amssymb}
+\usepackage{lmodern}
+\usepackage{ifxetex,ifluatex}
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math}
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\hypersetup{
+  pdftitle={HW 4},
+  pdfauthor={Caijun Qin},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+\urlstyle{same} % disable monospaced font for URLs
+\usepackage[margin=1in]{geometry}
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\usepackage{graphicx}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\ifluatex
+  \usepackage{selnolig}  % disable illegal ligatures
+\fi
+
+\title{HW 4}
+\author{Caijun Qin}
+\date{11/10/2021}
+
+\begin{document}
+\maketitle
+
+Install packages.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{packages }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\StringTok{\textquotesingle{}ggplot2\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}glmnet\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}Metrics\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}pls\textquotesingle{}}\NormalTok{)}
+\FunctionTok{install.packages}\NormalTok{(packages)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Installing packages into 'D:/Users/qcaij/OneDrive - University of Florida/DESKTOP-R7MUAPV/DATA/Users/qcaij/Documents/R/win-library/4.1'
+## (as 'lib' is unspecified)
+\end{verbatim}
+
+\begin{verbatim}
+## Error in contrib.url(repos, "source"): trying to use CRAN without setting a mirror
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{lapply}\NormalTok{(packages, library, }\AttributeTok{character.only =} \ConstantTok{TRUE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Warning: package 'ggplot2' was built under R version 4.1.1
+\end{verbatim}
+
+\begin{verbatim}
+## Warning: package 'glmnet' was built under R version 4.1.1
+\end{verbatim}
+
+\begin{verbatim}
+## Loading required package: Matrix
+\end{verbatim}
+
+\begin{verbatim}
+## Warning: package 'Matrix' was built under R version 4.1.1
+\end{verbatim}
+
+\begin{verbatim}
+## Loaded glmnet 4.1-2
+\end{verbatim}
+
+\begin{verbatim}
+## Warning: package 'Metrics' was built under R version 4.1.1
+\end{verbatim}
+
+\begin{verbatim}
+## Warning: package 'pls' was built under R version 4.1.1
+\end{verbatim}
+
+\begin{verbatim}
+## 
+## Attaching package: 'pls'
+\end{verbatim}
+
+\begin{verbatim}
+## The following object is masked from 'package:stats':
+## 
+##     loadings
+\end{verbatim}
+
+\begin{verbatim}
+## [[1]]
+## [1] "ggplot2"   "stats"     "graphics"  "grDevices" "utils"     "datasets" 
+## [7] "methods"   "base"     
+## 
+## [[2]]
+##  [1] "glmnet"    "Matrix"    "ggplot2"   "stats"     "graphics"  "grDevices"
+##  [7] "utils"     "datasets"  "methods"   "base"     
+## 
+## [[3]]
+##  [1] "Metrics"   "glmnet"    "Matrix"    "ggplot2"   "stats"     "graphics" 
+##  [7] "grDevices" "utils"     "datasets"  "methods"   "base"     
+## 
+## [[4]]
+##  [1] "pls"       "Metrics"   "glmnet"    "Matrix"    "ggplot2"   "stats"    
+##  [7] "graphics"  "grDevices" "utils"     "datasets"  "methods"   "base"
+\end{verbatim}
+
+Question 1
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# soft thresholding function}
+\NormalTok{soft }\OtherTok{\textless{}{-}} \ControlFlowTok{function}\NormalTok{(x, lambda) \{}
+  \FunctionTok{max}\NormalTok{(}\FunctionTok{abs}\NormalTok{(}\AttributeTok{x =}\NormalTok{ x) }\SpecialCharTok{{-}}\NormalTok{ lambda) }\SpecialCharTok{*} \FunctionTok{sign}\NormalTok{(}\AttributeTok{x =}\NormalTok{ x)}
+\NormalTok{\}}
+
+\NormalTok{lasso.cd }\OtherTok{\textless{}{-}} \ControlFlowTok{function}\NormalTok{(X, Y, lambda, }\AttributeTok{tol =} \FloatTok{1e{-}3}\NormalTok{) \{}
+\NormalTok{  p }\OtherTok{\textless{}{-}} \FunctionTok{ncol}\NormalTok{(}\AttributeTok{x =}\NormalTok{ X)}
+\NormalTok{  beta.tilde }\OtherTok{\textless{}{-}} \FunctionTok{rep}\NormalTok{(}\AttributeTok{x =} \DecValTok{1}\NormalTok{, }\AttributeTok{times =}\NormalTok{ p)}
+  \CommentTok{\# print(beta.tilde)}
+  
+\NormalTok{  r }\OtherTok{\textless{}{-}}\NormalTok{ Y }\SpecialCharTok{{-}}\NormalTok{ X }\SpecialCharTok{\%*\%}\NormalTok{ beta.tilde}
+  \CommentTok{\# print(r)}
+  
+\NormalTok{  beta.delta }\OtherTok{\textless{}{-}} \FloatTok{1e3}
+\NormalTok{  beta.tilde.old }\OtherTok{\textless{}{-}}\NormalTok{ beta.tilde}
+  
+  \ControlFlowTok{while}\NormalTok{ (beta.delta }\SpecialCharTok{\textgreater{}}\NormalTok{ tol) \{}
+    \ControlFlowTok{for}\NormalTok{ (j }\ControlFlowTok{in} \DecValTok{1}\SpecialCharTok{:}\NormalTok{p) \{}
+\NormalTok{      r\_j }\OtherTok{\textless{}{-}}\NormalTok{ r }\SpecialCharTok{+}\NormalTok{ X[, j] }\SpecialCharTok{*}\NormalTok{ beta.tilde[j]}
+\NormalTok{      x }\OtherTok{\textless{}{-}} \FunctionTok{t}\NormalTok{(}\AttributeTok{x =}\NormalTok{ r\_j) }\SpecialCharTok{\%*\%}\NormalTok{ X[, j] }\SpecialCharTok{/}\NormalTok{ (}\FunctionTok{t}\NormalTok{(}\AttributeTok{x =}\NormalTok{ X[, j]) }\SpecialCharTok{\%*\%}\NormalTok{ X[, j])}
+\NormalTok{      beta.plus }\OtherTok{\textless{}{-}} \FunctionTok{soft}\NormalTok{(}\AttributeTok{x =}\NormalTok{ x, }\AttributeTok{lambda =}\NormalTok{ lambda)}
+\NormalTok{      beta.tilde[j] }\OtherTok{\textless{}{-}}\NormalTok{ beta.plus}
+\NormalTok{      r }\OtherTok{\textless{}{-}}\NormalTok{ r\_j }\SpecialCharTok{{-}}\NormalTok{ X[, j] }\SpecialCharTok{*}\NormalTok{ beta.tilde[j]}
+\NormalTok{    \}}
+    
+    \CommentTok{\# change in estimated beta in this iteration compared to previous iteration}
+\NormalTok{    beta.delta }\OtherTok{\textless{}{-}} \FunctionTok{sum}\NormalTok{(}\FunctionTok{abs}\NormalTok{(}\AttributeTok{x =}\NormalTok{ beta.tilde }\SpecialCharTok{{-}}\NormalTok{ beta.tilde.old))}
+    \CommentTok{\# print(beta.delta)}
+\NormalTok{  \}}
+\NormalTok{  beta.tilde}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+part i.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{lasso.cd}\NormalTok{(}\AttributeTok{X =}\NormalTok{ x, }\AttributeTok{Y =}\NormalTok{ y, }\AttributeTok{lambda =} \FloatTok{0.5}\NormalTok{, }\AttributeTok{tol =} \DecValTok{45}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Error in ncol(x = X): object 'x' not found
+\end{verbatim}
+
+part ii.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{glmnet.model }\OtherTok{\textless{}{-}}\NormalTok{ glmnet}\SpecialCharTok{::}\FunctionTok{glmnet}\NormalTok{(}\AttributeTok{x =}\NormalTok{ x, }\AttributeTok{y =}\NormalTok{ y, }\AttributeTok{intercept =} \ConstantTok{FALSE}\NormalTok{, }\AttributeTok{lambda =} \FloatTok{0.5}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Error in glmnet::glmnet(x = x, y = y, intercept = FALSE, lambda = 0.5): object 'x' not found
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{coef}\NormalTok{(}\AttributeTok{object =}\NormalTok{ glmnet.model)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Error in coef(object = glmnet.model): object 'glmnet.model' not found
+\end{verbatim}
+
+The first coefficient is extremely close, and the second coefficient is
+somewhat close with at least matching sign. According to the glmnet
+model, most coefficients after the second are sparse i.e.~pretty much
+zero. The custom coefficients from coordinate descent does not indicate
+this as well with the current tolerance level for convergence.
+
+Question 2
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# reading in data}
+\NormalTok{data }\OtherTok{\textless{}{-}} \FunctionTok{read.csv}\NormalTok{(}\AttributeTok{file =} \StringTok{\textquotesingle{}./Data/Problem1.csv\textquotesingle{}}\NormalTok{, }\AttributeTok{header =} \ConstantTok{TRUE}\NormalTok{)}
+\NormalTok{x }\OtherTok{\textless{}{-}} \FunctionTok{as.matrix}\NormalTok{(}\AttributeTok{x =}\NormalTok{ data[,}\DecValTok{1}\SpecialCharTok{:}\DecValTok{52}\NormalTok{])}
+\NormalTok{y }\OtherTok{\textless{}{-}} \FunctionTok{as.numeric}\NormalTok{(}\AttributeTok{x =}\NormalTok{ data[,}\DecValTok{53}\NormalTok{])}
+
+\FunctionTok{load}\NormalTok{(}\AttributeTok{file =} \StringTok{\textquotesingle{}./Data/Problem2train.dat\textquotesingle{}}\NormalTok{)}
+\FunctionTok{load}\NormalTok{(}\AttributeTok{file =} \StringTok{\textquotesingle{}Data/Problem2test.dat\textquotesingle{}}\NormalTok{)}
+
+\NormalTok{x.train }\OtherTok{\textless{}{-}} \FunctionTok{as.matrix}\NormalTok{(}\AttributeTok{x =}\NormalTok{ dataTrain[, }\DecValTok{1}\SpecialCharTok{:}\DecValTok{204}\NormalTok{])}
+\NormalTok{y.train }\OtherTok{\textless{}{-}} \FunctionTok{as.matrix}\NormalTok{(}\AttributeTok{x =}\NormalTok{ dataTrain[, }\DecValTok{205}\NormalTok{])}
+\NormalTok{x.test }\OtherTok{\textless{}{-}} \FunctionTok{as.matrix}\NormalTok{(}\AttributeTok{x =}\NormalTok{ dataTest[, }\DecValTok{1}\SpecialCharTok{:}\DecValTok{204}\NormalTok{])}
+\NormalTok{y.test }\OtherTok{\textless{}{-}} \FunctionTok{as.matrix}\NormalTok{(}\AttributeTok{x =}\NormalTok{ dataTest[, }\DecValTok{205}\NormalTok{])}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{cor.matrix }\OtherTok{\textless{}{-}}\NormalTok{ stats}\SpecialCharTok{::}\FunctionTok{cor}\NormalTok{(}\AttributeTok{x =}\NormalTok{ x, }\AttributeTok{y =}\NormalTok{ x)}
+\NormalTok{stats}\SpecialCharTok{::}\FunctionTok{heatmap}\NormalTok{(}\AttributeTok{x =}\NormalTok{ cor.matrix)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{HW-4_files/figure-latex/unnamed-chunk-8-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# LASSO regression}
+\NormalTok{lasso.cv }\OtherTok{\textless{}{-}}\NormalTok{ glmnet}\SpecialCharTok{::}\FunctionTok{cv.glmnet}\NormalTok{(}\AttributeTok{x =}\NormalTok{ x.train, }\AttributeTok{y =}\NormalTok{ y.train, }\AttributeTok{alpha =} \DecValTok{0}\NormalTok{, }\AttributeTok{lambda =} \DecValTok{1}\SpecialCharTok{:}\DecValTok{1000}\NormalTok{)}
+\NormalTok{lasso.model }\OtherTok{\textless{}{-}}\NormalTok{ glmnet}\SpecialCharTok{::}\FunctionTok{glmnet}\NormalTok{(}\AttributeTok{x =}\NormalTok{ x.train, }\AttributeTok{y =}\NormalTok{ y.train, }\AttributeTok{alpha =} \DecValTok{0}\NormalTok{, }\AttributeTok{lambda =}\NormalTok{ lasso.cv}\SpecialCharTok{$}\NormalTok{lambda.min)}
+\NormalTok{lasso.pred }\OtherTok{\textless{}{-}}\NormalTok{ glmnet}\SpecialCharTok{::}\FunctionTok{predict.glmnet}\NormalTok{(}\AttributeTok{object =}\NormalTok{ lasso.model, }\AttributeTok{newx =}\NormalTok{ x.test, }\AttributeTok{type =} \StringTok{\textquotesingle{}response\textquotesingle{}}\NormalTok{)}
+\NormalTok{Metrics}\SpecialCharTok{::}\FunctionTok{mse}\NormalTok{(}\AttributeTok{actual =}\NormalTok{ y.test, }\AttributeTok{predicted =}\NormalTok{ lasso.pred)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 1.545917
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# ridge regression}
+\NormalTok{ridge.cv }\OtherTok{\textless{}{-}}\NormalTok{ glmnet}\SpecialCharTok{::}\FunctionTok{cv.glmnet}\NormalTok{(}\AttributeTok{x =}\NormalTok{ x.train, }\AttributeTok{y =}\NormalTok{ y.train, }\AttributeTok{alpha =} \DecValTok{1}\NormalTok{, }\AttributeTok{lambda =} \FunctionTok{seq}\NormalTok{(}\FloatTok{0.0}\NormalTok{, }\FloatTok{1.0}\NormalTok{, }\AttributeTok{by =} \FloatTok{0.0001}\NormalTok{))}
+\NormalTok{ridge.model }\OtherTok{\textless{}{-}}\NormalTok{ glmnet}\SpecialCharTok{::}\FunctionTok{glmnet}\NormalTok{(}\AttributeTok{x =}\NormalTok{ x.train, }\AttributeTok{y =}\NormalTok{ y.train, }\AttributeTok{alpha =} \DecValTok{1}\NormalTok{, }\AttributeTok{lambda =}\NormalTok{ ridge.cv}\SpecialCharTok{$}\NormalTok{lambda.min)}
+\NormalTok{ridge.pred }\OtherTok{\textless{}{-}}\NormalTok{ glmnet}\SpecialCharTok{::}\FunctionTok{predict.glmnet}\NormalTok{(}\AttributeTok{object =}\NormalTok{ ridge.model, }\AttributeTok{newx =}\NormalTok{ x.test, }\AttributeTok{type =} \StringTok{\textquotesingle{}response\textquotesingle{}}\NormalTok{)}
+\NormalTok{Metrics}\SpecialCharTok{::}\FunctionTok{mse}\NormalTok{(}\AttributeTok{actual =}\NormalTok{ y.test, }\AttributeTok{predicted =}\NormalTok{ ridge.pred)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 1.66887
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{pcr.model}\SpecialCharTok{$}\NormalTok{residuals}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Error in eval(expr, envir, enclos): object 'pcr.model' not found
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# PCA regression with no. of components chosen by CV}
+\NormalTok{pcr.model }\OtherTok{\textless{}{-}}\NormalTok{ pls}\SpecialCharTok{::}\FunctionTok{pcr}\NormalTok{(}\AttributeTok{formula =}\NormalTok{ y.train }\SpecialCharTok{\textasciitilde{}}\NormalTok{ x.train, }\AttributeTok{center =} \ConstantTok{TRUE}\NormalTok{, }\AttributeTok{scale =} \ConstantTok{TRUE}\NormalTok{, }\AttributeTok{validation =} \StringTok{\textquotesingle{}CV\textquotesingle{}}\NormalTok{)}
+\FunctionTok{summary}\NormalTok{(}\AttributeTok{object =}\NormalTok{ pcr.model) }\CommentTok{\# 125 components recommended by CV}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Data:    X dimension: 140 204 
+##  Y dimension: 140 1
+## Fit method: svdpc
+## Number of components considered: 125
+## 
+## VALIDATION: RMSEP
+## Cross-validated using 10 random segments.
+##        (Intercept)  1 comps  2 comps  3 comps  4 comps  5 comps  6 comps
+## CV           8.053    5.537    5.692    1.511    1.421    1.287    1.245
+## adjCV        8.053    5.479    5.698    1.505    1.417    1.282    1.239
+##        7 comps  8 comps  9 comps  10 comps  11 comps  12 comps  13 comps
+## CV       1.248    1.246    1.252     1.257     1.256      1.24     1.237
+## adjCV    1.243    1.242    1.249     1.255     1.251      1.23     1.230
+##        14 comps  15 comps  16 comps  17 comps  18 comps  19 comps  20 comps
+## CV        1.244     1.253     1.243     1.254     1.250     1.255     1.255
+## adjCV     1.242     1.251     1.224     1.244     1.242     1.252     1.248
+##        21 comps  22 comps  23 comps  24 comps  25 comps  26 comps  27 comps
+## CV        1.235     1.233     1.243     1.257     1.269     1.278     1.244
+## adjCV     1.222     1.224     1.235     1.246     1.263     1.275     1.234
+##        28 comps  29 comps  30 comps  31 comps  32 comps  33 comps  34 comps
+## CV        1.240     1.229     1.236     1.254     1.256     1.252     1.266
+## adjCV     1.219     1.210     1.220     1.239     1.241     1.239     1.256
+##        35 comps  36 comps  37 comps  38 comps  39 comps  40 comps  41 comps
+## CV        1.270     1.266     1.261     1.260     1.263     1.262     1.241
+## adjCV     1.257     1.254     1.249     1.246     1.245     1.245     1.221
+##        42 comps  43 comps  44 comps  45 comps  46 comps  47 comps  48 comps
+## CV        1.253     1.243     1.232     1.253     1.266     1.274     1.290
+## adjCV     1.237     1.222     1.213     1.232     1.247     1.258     1.266
+##        49 comps  50 comps  51 comps  52 comps  53 comps  54 comps  55 comps
+## CV        1.288     1.298     1.296     1.301     1.314      1.33     1.360
+## adjCV     1.265     1.274     1.273     1.278     1.292      1.31     1.342
+##        56 comps  57 comps  58 comps  59 comps  60 comps  61 comps  62 comps
+## CV        1.354     1.353     1.357     1.353     1.369     1.354     1.370
+## adjCV     1.332     1.332     1.338     1.336     1.356     1.336     1.341
+##        63 comps  64 comps  65 comps  66 comps  67 comps  68 comps  69 comps
+## CV        1.400     1.398     1.398     1.414     1.412     1.422     1.421
+## adjCV     1.374     1.377     1.368     1.386     1.386     1.397     1.399
+##        70 comps  71 comps  72 comps  73 comps  74 comps  75 comps  76 comps
+## CV        1.420     1.422     1.430     1.427     1.425     1.424     1.430
+## adjCV     1.385     1.389     1.399     1.401     1.402     1.397     1.402
+##        77 comps  78 comps  79 comps  80 comps  81 comps  82 comps  83 comps
+## CV        1.419     1.421     1.436     1.446     1.433     1.438     1.438
+## adjCV     1.396     1.384     1.395     1.401     1.390     1.397     1.397
+##        84 comps  85 comps  86 comps  87 comps  88 comps  89 comps  90 comps
+## CV        1.463     1.462     1.469     1.477     1.486     1.479     1.478
+## adjCV     1.421     1.422     1.429     1.438     1.446     1.441     1.438
+##        91 comps  92 comps  93 comps  94 comps  95 comps  96 comps  97 comps
+## CV        1.498     1.551     1.574     1.610     1.634     1.657     1.675
+## adjCV     1.455     1.506     1.528     1.563     1.586     1.609     1.624
+##        98 comps  99 comps  100 comps  101 comps  102 comps  103 comps
+## CV        1.684     1.689      1.694      1.708      1.725      1.739
+## adjCV     1.634     1.639      1.646      1.659      1.677      1.687
+##        104 comps  105 comps  106 comps  107 comps  108 comps  109 comps
+## CV         1.748      1.777      1.788      1.795      1.818      1.825
+## adjCV      1.699      1.730      1.742      1.752      1.774      1.770
+##        110 comps  111 comps  112 comps  113 comps  114 comps  115 comps
+## CV         1.837      1.832      1.839      1.933      1.932      1.966
+## adjCV      1.782      1.772      1.779      1.869      1.869      1.901
+##        116 comps  117 comps  118 comps  119 comps  120 comps  121 comps
+## CV         2.018      2.091      2.118      2.201      2.209      2.273
+## adjCV      1.952      2.019      2.048      2.130      2.142      2.193
+##        122 comps  123 comps  124 comps  125 comps
+## CV         2.396      2.416      2.413      2.455
+## adjCV      2.312      2.331      2.330      2.370
+## 
+## TRAINING: % variance explained
+##          1 comps  2 comps  3 comps  4 comps  5 comps  6 comps  7 comps  8 comps
+## X          27.62    49.60    66.61    72.74    75.34    76.75    77.84    78.88
+## y.train    53.06    53.45    96.75    97.11    97.69    97.88    97.88    97.90
+##          9 comps  10 comps  11 comps  12 comps  13 comps  14 comps  15 comps
+## X          79.82     80.73     81.58     82.38     83.16     83.89     84.59
+## y.train    97.90     97.90     97.94     98.05     98.05     98.06     98.10
+##          16 comps  17 comps  18 comps  19 comps  20 comps  21 comps  22 comps
+## X           85.26     85.92     86.55     87.14     87.71     88.27     88.81
+## y.train     98.19     98.20     98.20     98.21     98.24     98.29     98.29
+##          23 comps  24 comps  25 comps  26 comps  27 comps  28 comps  29 comps
+## X           89.33     89.82     90.30     90.74     91.16     91.57     91.96
+## y.train     98.29     98.34     98.34     98.34     98.42     98.48     98.51
+##          30 comps  31 comps  32 comps  33 comps  34 comps  35 comps  36 comps
+## X           92.33     92.68     93.02     93.35     93.67     93.98     94.27
+## y.train     98.51     98.51     98.51     98.52     98.52     98.54     98.56
+##          37 comps  38 comps  39 comps  40 comps  41 comps  42 comps  43 comps
+## X           94.53     94.78     95.02     95.24     95.45     95.64     95.82
+## y.train     98.56     98.60     98.62     98.64     98.68     98.68     98.72
+##          44 comps  45 comps  46 comps  47 comps  48 comps  49 comps  50 comps
+## X           95.99     96.16     96.32     96.48     96.62     96.77     96.90
+## y.train     98.74     98.75     98.76     98.76     98.81     98.82     98.82
+##          51 comps  52 comps  53 comps  54 comps  55 comps  56 comps  57 comps
+## X           97.03     97.16     97.28     97.39     97.50     97.60     97.70
+## y.train     98.82     98.82     98.82     98.83     98.83     98.86     98.86
+##          58 comps  59 comps  60 comps  61 comps  62 comps  63 comps  64 comps
+## X           97.80     97.89     97.98     98.07     98.15     98.24     98.32
+## y.train     98.86     98.86     98.86     98.91     98.96     98.96     98.97
+##          65 comps  66 comps  67 comps  68 comps  69 comps  70 comps  71 comps
+## X           98.39     98.47     98.54     98.61     98.67     98.74     98.79
+## y.train     99.02     99.02     99.03     99.03     99.03     99.11     99.11
+##          72 comps  73 comps  74 comps  75 comps  76 comps  77 comps  78 comps
+## X           98.85     98.91     98.96     99.01     99.06     99.10     99.14
+## y.train     99.11     99.11     99.13     99.16     99.18     99.18     99.25
+##          79 comps  80 comps  81 comps  82 comps  83 comps  84 comps  85 comps
+## X           99.18     99.22     99.26     99.30     99.33     99.37      99.4
+## y.train     99.26     99.29     99.29     99.29     99.29     99.29      99.3
+##          86 comps  87 comps  88 comps  89 comps  90 comps  91 comps  92 comps
+## X           99.43     99.46     99.49     99.51     99.54     99.56     99.59
+## y.train     99.30     99.30     99.31     99.32     99.33     99.35     99.35
+##          93 comps  94 comps  95 comps  96 comps  97 comps  98 comps  99 comps
+## X           99.61     99.63     99.65     99.67     99.69     99.71     99.72
+## y.train     99.36     99.36     99.36     99.36     99.37     99.37     99.38
+##          100 comps  101 comps  102 comps  103 comps  104 comps  105 comps
+## X            99.74      99.75      99.77      99.78       99.8      99.81
+## y.train      99.38      99.38      99.38      99.40       99.4      99.40
+##          106 comps  107 comps  108 comps  109 comps  110 comps  111 comps
+## X            99.82      99.83      99.84      99.85      99.86      99.87
+## y.train      99.40      99.40      99.42      99.48      99.48      99.54
+##          112 comps  113 comps  114 comps  115 comps  116 comps  117 comps
+## X            99.88      99.89      99.90      99.91      99.91      99.92
+## y.train      99.55      99.55      99.55      99.57      99.57      99.59
+##          118 comps  119 comps  120 comps  121 comps  122 comps  123 comps
+## X            99.93      99.93      99.94      99.94      99.95      99.95
+## y.train      99.59      99.60      99.60      99.67      99.67      99.69
+##          124 comps  125 comps
+## X            99.96      99.96
+## y.train      99.69      99.69
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{pcr.pred }\OtherTok{\textless{}{-}} \FunctionTok{predict}\NormalTok{(}\AttributeTok{object =}\NormalTok{ pcr.model, }\AttributeTok{newdata =}\NormalTok{ x.test, }\AttributeTok{ncomp =} \DecValTok{125}\NormalTok{)}
+\NormalTok{Metrics}\SpecialCharTok{::}\FunctionTok{mse}\NormalTok{(}\AttributeTok{actual =}\NormalTok{ y.test, }\AttributeTok{predicted =} \FunctionTok{as.vector}\NormalTok{(}\AttributeTok{x =}\NormalTok{ pcr.pred))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 3.002997
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# PCA regression with minimum no. of components to contain 95\% explained variance}
+\NormalTok{pca.results }\OtherTok{\textless{}{-}}\NormalTok{ stats}\SpecialCharTok{::}\FunctionTok{prcomp}\NormalTok{(}\AttributeTok{x =}\NormalTok{ x.train, }\AttributeTok{center =} \ConstantTok{TRUE}\NormalTok{, }\AttributeTok{scale. =} \ConstantTok{TRUE}\NormalTok{)}
+\NormalTok{stats}\SpecialCharTok{::}\FunctionTok{heatmap}\NormalTok{(}\AttributeTok{x =}\NormalTok{ stats}\SpecialCharTok{::}\FunctionTok{cor}\NormalTok{(}\AttributeTok{x =}\NormalTok{ pca.results}\SpecialCharTok{$}\NormalTok{x, }\AttributeTok{y =}\NormalTok{ pca.results}\SpecialCharTok{$}\NormalTok{x))}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{HW-4_files/figure-latex/unnamed-chunk-9-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{pca.sum }\OtherTok{\textless{}{-}} \FunctionTok{summary}\NormalTok{(}\AttributeTok{object =}\NormalTok{ pca.results)}
+\NormalTok{component.index }\OtherTok{\textless{}{-}} \FunctionTok{which}\NormalTok{(}\FunctionTok{as.vector}\NormalTok{(}\AttributeTok{x =}\NormalTok{ pca.sum}\SpecialCharTok{$}\NormalTok{importance[}\StringTok{\textquotesingle{}Cumulative Proportion\textquotesingle{}}\NormalTok{, ] }\SpecialCharTok{\textless{}} \FloatTok{0.95}\NormalTok{) }\SpecialCharTok{==} \ConstantTok{FALSE}\NormalTok{)[}\DecValTok{1}\NormalTok{] }\CommentTok{\# number of top components with cumulative explained variance \textgreater{}= 0.95}
+\NormalTok{pcr.}\FloatTok{95.}\NormalTok{model }\OtherTok{\textless{}{-}}\NormalTok{ pls}\SpecialCharTok{::}\FunctionTok{pcr}\NormalTok{(}\AttributeTok{formula =}\NormalTok{ y.train }\SpecialCharTok{\textasciitilde{}}\NormalTok{ x.train, }\AttributeTok{center =} \ConstantTok{TRUE}\NormalTok{, }\AttributeTok{scale =} \ConstantTok{TRUE}\NormalTok{)}
+\NormalTok{pcr.}\FloatTok{95.}\NormalTok{pred }\OtherTok{\textless{}{-}} \FunctionTok{predict}\NormalTok{(}\AttributeTok{object =}\NormalTok{ pcr.}\FloatTok{95.}\NormalTok{model, }\AttributeTok{newdata =}\NormalTok{ x.test, }\AttributeTok{ncomp =}\NormalTok{ component.index)}
+\NormalTok{Metrics}\SpecialCharTok{::}\FunctionTok{mse}\NormalTok{(}\AttributeTok{actual =}\NormalTok{ y.test, }\AttributeTok{predicted =} \FunctionTok{as.vector}\NormalTok{(}\AttributeTok{x =}\NormalTok{ pcr.}\FloatTok{95.}\NormalTok{pred))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 1.838239
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# PLS regression with components chosen by CV}
+\NormalTok{pls.model }\OtherTok{\textless{}{-}}\NormalTok{ pls}\SpecialCharTok{::}\FunctionTok{plsr}\NormalTok{(y.train }\SpecialCharTok{\textasciitilde{}}\NormalTok{ x.train, }\AttributeTok{center =} \ConstantTok{TRUE}\NormalTok{, }\AttributeTok{scale =} \ConstantTok{TRUE}\NormalTok{, }\AttributeTok{validation =} \StringTok{\textquotesingle{}CV\textquotesingle{}}\NormalTok{)}
+\FunctionTok{summary}\NormalTok{(}\AttributeTok{object =}\NormalTok{ pls.model) }\CommentTok{\# 125 components recommended by CV}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Data:    X dimension: 140 204 
+##  Y dimension: 140 1
+## Fit method: kernelpls
+## Number of components considered: 125
+## 
+## VALIDATION: RMSEP
+## Cross-validated using 10 random segments.
+##        (Intercept)  1 comps  2 comps  3 comps  4 comps  5 comps  6 comps
+## CV           8.053    2.347    1.391    1.287    1.243    1.237    1.279
+## adjCV        8.053    2.339    1.385    1.266    1.240    1.228    1.260
+##        7 comps  8 comps  9 comps  10 comps  11 comps  12 comps  13 comps
+## CV       1.373    1.476    1.568     1.640     1.704     1.798     1.908
+## adjCV    1.344    1.435    1.518     1.586     1.644     1.731     1.833
+##        14 comps  15 comps  16 comps  17 comps  18 comps  19 comps  20 comps
+## CV        2.011     2.083     2.169     2.221     2.291     2.342     2.373
+## adjCV     1.929     1.994     2.073     2.121     2.185     2.231     2.259
+##        21 comps  22 comps  23 comps  24 comps  25 comps  26 comps  27 comps
+## CV        2.373     2.380     2.388     2.407     2.419     2.423     2.438
+## adjCV     2.259     2.264     2.272     2.289     2.300     2.302     2.316
+##        28 comps  29 comps  30 comps  31 comps  32 comps  33 comps  34 comps
+## CV        2.450     2.458     2.464     2.472     2.477     2.480     2.481
+## adjCV     2.327     2.335     2.339     2.347     2.351     2.353     2.354
+##        35 comps  36 comps  37 comps  38 comps  39 comps  40 comps  41 comps
+## CV        2.480     2.476     2.475     2.474     2.472     2.466     2.463
+## adjCV     2.354     2.349     2.349     2.347     2.345     2.340     2.337
+##        42 comps  43 comps  44 comps  45 comps  46 comps  47 comps  48 comps
+## CV        2.459     2.457     2.457     2.456     2.455     2.453     2.453
+## adjCV     2.333     2.332     2.331     2.330     2.329     2.328     2.327
+##        49 comps  50 comps  51 comps  52 comps  53 comps  54 comps  55 comps
+## CV        2.452     2.450     2.448     2.447     2.446     2.446     2.447
+## adjCV     2.326     2.324     2.322     2.321     2.321     2.321     2.321
+##        56 comps  57 comps  58 comps  59 comps  60 comps  61 comps  62 comps
+## CV        2.447     2.447     2.447     2.447     2.447     2.447     2.447
+## adjCV     2.321     2.321     2.321     2.321     2.321     2.321     2.321
+##        63 comps  64 comps  65 comps  66 comps  67 comps  68 comps  69 comps
+## CV        2.447     2.447     2.447     2.447     2.447     2.447     2.447
+## adjCV     2.321     2.321     2.321     2.321     2.321     2.321     2.321
+##        70 comps  71 comps  72 comps  73 comps  74 comps  75 comps  76 comps
+## CV        2.447     2.447     2.447     2.447     2.447     2.447     2.447
+## adjCV     2.321     2.321     2.321     2.321     2.321     2.321     2.321
+##        77 comps  78 comps  79 comps  80 comps  81 comps  82 comps  83 comps
+## CV        2.447     2.447     2.447     2.447     2.447     2.447     2.447
+## adjCV     2.321     2.321     2.321     2.321     2.321     2.321     2.321
+##        84 comps  85 comps  86 comps  87 comps  88 comps  89 comps  90 comps
+## CV        2.447     2.447     2.447     2.447     2.447     2.447     2.447
+## adjCV     2.321     2.321     2.321     2.321     2.321     2.321     2.321
+##        91 comps  92 comps  93 comps  94 comps  95 comps  96 comps  97 comps
+## CV        2.447     2.447     2.447     2.447     2.447     2.447     2.447
+## adjCV     2.321     2.321     2.321     2.321     2.321     2.321     2.321
+##        98 comps  99 comps  100 comps  101 comps  102 comps  103 comps
+## CV        2.447     2.447      2.447      2.447      2.447      2.447
+## adjCV     2.321     2.321      2.321      2.321      2.321      2.321
+##        104 comps  105 comps  106 comps  107 comps  108 comps  109 comps
+## CV         2.447      2.447      2.447      2.447      2.447      2.447
+## adjCV      2.321      2.321      2.321      2.321      2.321      2.321
+##        110 comps  111 comps  112 comps  113 comps  114 comps  115 comps
+## CV         2.447      2.447      2.447      2.447      2.447      2.447
+## adjCV      2.321      2.321      2.321      2.321      2.321      2.321
+##        116 comps  117 comps  118 comps  119 comps  120 comps  121 comps
+## CV         2.447      2.447      2.447      2.447      2.447      2.447
+## adjCV      2.321      2.321      2.321      2.321      2.321      2.321
+##        122 comps  123 comps  124 comps  125 comps
+## CV         2.447      2.447      2.447      243.6
+## adjCV      2.321      2.321      2.321      231.1
+## 
+## TRAINING: % variance explained
+##          1 comps  2 comps  3 comps  4 comps  5 comps  6 comps  7 comps  8 comps
+## X          25.09    44.55    50.77    68.78    74.59    76.08    77.10    77.70
+## y.train    92.21    97.40    98.04    98.21    98.50    98.84    99.03    99.23
+##          9 comps  10 comps  11 comps  12 comps  13 comps  14 comps  15 comps
+## X          78.23     78.86     79.42     79.95     80.47     81.06     81.64
+## y.train    99.36     99.44     99.51     99.56     99.62     99.67     99.71
+##          16 comps  17 comps  18 comps  19 comps  20 comps  21 comps  22 comps
+## X           82.13     82.69     83.08     83.58     84.04     84.47     84.93
+## y.train     99.76     99.79     99.83     99.85     99.88     99.89     99.90
+##          23 comps  24 comps  25 comps  26 comps  27 comps  28 comps  29 comps
+## X           85.31     85.92     86.35     86.71     87.13     87.48     87.93
+## y.train     99.92     99.93     99.94     99.95     99.96     99.97     99.97
+##          30 comps  31 comps  32 comps  33 comps  34 comps  35 comps  36 comps
+## X           88.31     88.71     89.13     89.51     89.87     90.15     90.52
+## y.train     99.98     99.98     99.99     99.99     99.99     99.99     99.99
+##          37 comps  38 comps  39 comps  40 comps  41 comps  42 comps  43 comps
+## X           90.83     91.18     91.54     91.87     92.15     92.43     92.72
+## y.train     99.99     99.99    100.00    100.00    100.00    100.00    100.00
+##          44 comps  45 comps  46 comps  47 comps  48 comps  49 comps  50 comps
+## X           93.04     93.33     93.61     93.89     94.21     94.46     94.69
+## y.train    100.00    100.00    100.00    100.00    100.00    100.00    100.00
+##          51 comps  52 comps  53 comps  54 comps  55 comps  56 comps  57 comps
+## X           94.96     95.14      95.3     95.52      95.7     95.86     96.04
+## y.train    100.00    100.00     100.0    100.00     100.0    100.00    100.00
+##          58 comps  59 comps  60 comps  61 comps  62 comps  63 comps  64 comps
+## X           96.26     96.41     96.57     96.77     96.95     97.07     97.17
+## y.train    100.00    100.00    100.00    100.00    100.00    100.00    100.00
+##          65 comps  66 comps  67 comps  68 comps  69 comps  70 comps  71 comps
+## X           97.26     97.34     97.43     97.53     97.59     97.67     97.75
+## y.train    100.00    100.00    100.00    100.00    100.00    100.00    100.00
+##          72 comps  73 comps  74 comps  75 comps  76 comps  77 comps  78 comps
+## X           97.85     97.93        98     98.09     98.17     98.21     98.27
+## y.train    100.00    100.00       100    100.00    100.00    100.00    100.00
+##          79 comps  80 comps  81 comps  82 comps  83 comps  84 comps  85 comps
+## X           98.33     98.39     98.47     98.54     98.59     98.66     98.71
+## y.train    100.00    100.00    100.00    100.00    100.00    100.00    100.00
+##          86 comps  87 comps  88 comps  89 comps  90 comps  91 comps  92 comps
+## X           98.77     98.81     98.86     98.92     98.96     99.02     99.07
+## y.train    100.00    100.00    100.00    100.00    100.00    100.00    100.00
+##          93 comps  94 comps  95 comps  96 comps  97 comps  98 comps  99 comps
+## X           99.11     99.15      99.2     99.24     99.28     99.32     99.36
+## y.train    100.00    100.00     100.0    100.00    100.00    100.00    100.00
+##          100 comps  101 comps  102 comps  103 comps  104 comps  105 comps
+## X            99.41      99.44      99.47      99.49      99.52      99.55
+## y.train     100.00     100.00     100.00     100.00     100.00     100.00
+##          106 comps  107 comps  108 comps  109 comps  110 comps  111 comps
+## X            99.59      99.61      99.62      99.64      99.66      99.68
+## y.train     100.00     100.00     100.00     100.00     100.00     100.00
+##          112 comps  113 comps  114 comps  115 comps  116 comps  117 comps
+## X             99.7      99.72      99.73      99.75      99.78       99.8
+## y.train      100.0     100.00     100.00     100.00     100.00      100.0
+##          118 comps  119 comps  120 comps  121 comps  122 comps  123 comps
+## X            99.81      99.82      99.83      99.84      99.86      99.87
+## y.train     100.00     100.00     100.00     100.00     100.00     100.00
+##          124 comps  125 comps
+## X            99.88      99.89
+## y.train     100.00     100.00
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{pls.pred }\OtherTok{\textless{}{-}} \FunctionTok{predict}\NormalTok{(}\AttributeTok{object =}\NormalTok{ pls.model, }\AttributeTok{newdata =}\NormalTok{ x.test, }\AttributeTok{ncomp =} \DecValTok{125}\NormalTok{)}
+\NormalTok{Metrics}\SpecialCharTok{::}\FunctionTok{mse}\NormalTok{(}\AttributeTok{actual =}\NormalTok{ y.test, }\AttributeTok{predicted =} \FunctionTok{as.vector}\NormalTok{(}\AttributeTok{x =}\NormalTok{ pls.pred))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 4.781064
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# ElasticNet regression}
+\NormalTok{en.cv }\OtherTok{\textless{}{-}}\NormalTok{ glmnet}\SpecialCharTok{::}\FunctionTok{cv.glmnet}\NormalTok{(}\AttributeTok{x =}\NormalTok{ x.train, }\AttributeTok{y =}\NormalTok{ y.train, }\AttributeTok{alpha =} \FloatTok{0.5}\NormalTok{, }\AttributeTok{lambda =} \DecValTok{1}\SpecialCharTok{:}\DecValTok{1000}\NormalTok{)}
+\NormalTok{en.model }\OtherTok{\textless{}{-}}\NormalTok{ glmnet}\SpecialCharTok{::}\FunctionTok{glmnet}\NormalTok{(}\AttributeTok{x =}\NormalTok{ x.train, }\AttributeTok{y =}\NormalTok{ y.train, }\AttributeTok{alpha =} \FloatTok{0.5}\NormalTok{, }\AttributeTok{lambda =}\NormalTok{ en.cv}\SpecialCharTok{$}\NormalTok{lambda.min)}
+\NormalTok{en.pred }\OtherTok{\textless{}{-}}\NormalTok{ glmnet}\SpecialCharTok{::}\FunctionTok{predict.glmnet}\NormalTok{(}\AttributeTok{object =}\NormalTok{ en.model, }\AttributeTok{newx =}\NormalTok{ x.test, }\AttributeTok{type =} \StringTok{\textquotesingle{}response\textquotesingle{}}\NormalTok{)}
+\NormalTok{Metrics}\SpecialCharTok{::}\FunctionTok{mse}\NormalTok{(}\AttributeTok{actual =}\NormalTok{ y.test, }\AttributeTok{predicted =}\NormalTok{ en.pred)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 2.798847
+\end{verbatim}
+
+Based on MSE, ridge regression performed the worst, and ElasticNet
+performed the best.
+
+\end{document}

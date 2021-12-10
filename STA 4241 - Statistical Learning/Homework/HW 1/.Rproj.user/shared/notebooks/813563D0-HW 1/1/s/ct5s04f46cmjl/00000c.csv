@@ -1,0 +1,7 @@
+"0","# rm(list=ls())"
+"0",""
+"0","## Now load data set"
+"0","data(Smarket)"
+"0",""
+"0","## look at data"
+"0","head(Smarket)"
