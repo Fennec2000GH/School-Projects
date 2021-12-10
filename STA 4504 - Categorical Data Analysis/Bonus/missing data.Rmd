@@ -1,0 +1,97 @@
+---
+title: "missing data"
+author: "Caijun Qin"
+date: "12/6/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Install packages
+
+```{r}
+
+packages <- c('comprehenr', 'dplyr', 'mice', 'mitml', 'stats', 'VIM')
+install.packages(packages)
+lapply(X = packages, FUN = library, character.only = TRUE)
+
+```
+
+Load data
+
+```{r}
+# import from CSV
+crabs.data <- as.data.frame(x = read.csv(file = 'crabs_miss.csv', header = TRUE))
+crabs.data <- crabs.data %>% mutate(
+  color = factor(x = color, levels = c('D', 'MD', 'M', 'ML')),
+  spine = factor(x = spine, levels = c('Poor', 'Good', 'Excellent'))
+)
+crabs.data
+```
+
+Analyze observed data
+
+```{r}
+graphics::hist(x = crabs.data$sat)
+graphics::hist(x = crabs.data$weight)
+graphics::hist(x = crabs.data$width)
+graphics::pie(x = table(crabs.data$color))
+graphics::pie(x = table(crabs.data$spine))
+```
+
+Analyze missing data
+
+```{r}
+# visualize missing data
+VIM::aggr(x = crabs.data, labels = names(x = crabs.data), numbers = TRUE, sortVars = TRUE, ylab = c('Prop. of Missing Data', 'Pattern'))
+VIM::barMiss(x = crabs.data)
+mice::md.pattern(x = crabs.data, rotate.names = TRUE)
+
+# count of missing data per variable
+colnames(x = crabs.data)
+crabs.col.list <- comprehenr::to_list(
+  expr = for(column in colnames(x = crabs.data)) 
+    eval(expr = parse(text = sprintf(fmt = 'crabs.data$%s', column)))
+)
+
+lapply(X = crabs.col.list, VIM::countNA)
+```
+
+Multiple imputations
+
+```{r}
+# generate multiple imputations per missing value
+method <- c('sample', 'norm', 'norm', 'rf', 'rf')
+crabs.imputed <- mice::mice(crabs.data, m = 5, maxit = 50, method = method, seed = 500)
+summary(object = crabs.imputed)
+crabs.imputed$imp
+
+# imputation attributes
+crabs.imputed$predictorMatrix
+crabs.imputed$method
+
+# inspect imputed values
+mice::densityplot(x = crabs.imputed)
+mice::xyplot(crabs.imputed, sat ~ weight + width)
+mice::stripplot(x = crabs.imputed)
+
+# combine imputed values with observed values
+crabs.complete <- mice::complete(data = crabs.imputed)
+```
+
+Fitting values
+
+```{r}
+crabs.model <- stats::glm(formula = sat ~ ., data = crabs.complete, family = )
+crabs.model.fit <- with(crabs.imputed, crabs.model)
+```
+
+Pooling and tests
+
+```{r}
+summary(object = mice::pool(object = crabs.model.fit))
+mice::D1(fit1 = crabs.model.fit)
+mice::D3(fit1 = crabs.model.fit)
+```
