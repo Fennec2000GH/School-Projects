@@ -1,0 +1,97 @@
+---
+title: "Survey of Boosting Methods"
+author: "Caijun Qin"
+date: "5 12 2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo = TRUE,
+  warning = FALSE,
+  error = FALSE
+)
+```
+
+Packages
+
+```{r}
+packages <- c('fastAdaboost', 'caret', 'dplyr', 'deepboost', 'gbm', 'MASS', 'parallel', 'reticulate', 'VIM', 'xgboost')
+install.packages(packages)
+lapply(X = packages, FUN = library, character.only = TRUE)
+```
+
+Car evaluation dataset (obsolete for being multinomial)
+
+```{r}
+car.data <- read.table(file = 'data/car.data', header = FALSE, sep = ',')
+car.data <- data.frame(car.data)
+colnames(x = car.data) <- c('buying', 'maint', 'doors', 'persons', 'lug_boot', 'safety', 'accept')
+car.data <- car.data %>% mutate(
+  buying = factor(x = buying, levels = c('low', 'med', 'high', 'vhigh')),
+  maint = factor(x = maint, levels = c('low', 'med', 'high', 'vhigh')),
+  doors = factor(x = doors, levels = c('2', '3', '4', '5-more')),
+  persons = factor(x = persons, levels = c('2', '4', 'more')),
+  lug_boot = factor(x = lug_boot, levels = c('small', 'med', 'big')),
+  safety = factor(x = safety, levels = c('low', 'med', 'high')),
+  accept = factor(x = accept, levels = c('unacc', 'acc', 'good', 'v-good'))
+)
+car.data <- car.data[stats::complete.cases(car.data), ]
+VIM::aggr(x = car.data)
+car.data
+
+
+x <- car.data[1:6]
+y <- car.data$accept
+```
+
+Abalone dataset (obsolete due to compatibility issues with boosting libraries)
+
+```{r}
+abalone.data <- read.csv(file = 'data/abalone.csv')
+abalone.data <- abalone.data %>%mutate(
+  Sex = factor(x = Sex), 
+  Class_number_of_rings = factor(x = Class_number_of_rings, levels = 1:27)
+)
+abalone.data <- abalone.data[stats::complete.cases(abalone.data), ]
+VIM::aggr(abalone.data)
+abalone.data
+```
+
+AdaBoost
+
+```{r}
+adaboost.model <- fastAdaboost::adaboost(formula = y ~ ., data = MASS::bacteria, nIter = 1000)
+summary(object = adaboost.model)
+adaboost.model$weights
+```
+
+DeepBoost
+
+```{r}
+deepboost.model <- deepboost::deepboost(formula = y ~ ., data = MASS::bacteria, num_iter = 1000)
+summary(object = deepboost.model)
+deepboost.model
+```
+
+Gradient Boost
+
+```{r}
+gbm.model <- gbm::gbm(formula = y ~ ., data = MASS::bacteria, distribution = 'gaussian',  n.trees = 1000, n.cores = parallel::detectCores() - 1)
+summary(object = gbm.model)
+gbm.model
+```
+
+xgBoost
+
+```{r}
+bacteria.matrix <- as.matrix(x = MASS::bacteria)
+for (i in c(1:6)[-4]) {
+  bacteria.matrix[, i] <- as.factor(x = bacteria.matrix[, i])
+}
+bacteria.matrix[, 4] <- as.integer(x = bacteria.matrix[, 4])
+bacteria.matrix
+xgboost.model <- xgboost::xgboost(data = bacteria.matrix[-0], label = bacteria.matrix[0], nrounds = 1000)
+xgboost.model
+```
+
