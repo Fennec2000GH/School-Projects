@@ -1,0 +1,241 @@
+---
+title: "Multiple Linear Regression"
+author: "Caijun Qin"
+date: "28/04/2021"
+output:
+  html_document: default
+  latex_engine: xelatex
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, fig.align="center", message=FALSE, warning=FALSE)
+```
+
+
+## North Carolina Births
+
+
+This is the same data we used for Lab 4. In 2004, the state of North Carolina released to the public a large data set containing information on births recorded in this state. This data set has been of interest to medical researchers who are studying the relation between habits and practices of expectant mothers and the birth of their children. We will work with a sample of observations from this data set. These cases were chosen at random.
+
+
+We have observations on 13 different variables, some categorical and some numerical. The meaning of each variable is as follows.
+
+\begin{table}[h] \small
+\begin{tabular}{r | l}
+\texttt{fage} & father's age in years. \\
+\texttt{mage} & mother's age in years. \\
+\texttt{mature} & maturity status of mother. \\
+\texttt{weeks} & length of pregnancy in weeks. \\
+\texttt{premie} & whether the birth was classified as premature (premie) or full-term. \\
+\texttt{visits} & number of hospital visits during pregnancy. \\
+\texttt{gained} & weight gained by mother during pregnancy in pounds. \\
+\texttt{weight} & weight of the baby at birth in pounds. \\
+\texttt{lowbirthweight} & whether baby was classified as low birthweight (`low`) or not (`not low`). \\
+\texttt{gender} & gender of the baby, `female` or `male`. \\
+\texttt{habit} & status of the mother as a `nonsmoker` or a `smoker`. \\
+\texttt{marital} & whether mother is `married` or `not married` at birth. \\
+\texttt{whitemom} & whether mom is `white` or `not white`. \\
+\end{tabular}
+\end{table}
+
+We will try to fit a model where the response variable is the birth weight in pounds `weight`. We are interested in identifying the best predictors among the other available variables. In this case, we will exclude the variable `fage` from the analysis as it contains a large quantity of missing values.
+
+Let's load the `nc` data set into our workspace, remove the `fage` variable and exclude records with missing values.
+
+```{r}
+
+nc <- read.csv("nc.csv", header=TRUE)
+
+# remove first column, 'fage' variable 
+nc <- nc[,-1]
+
+# remove records with missing values
+nc <- na.omit(nc)
+dim(nc)
+attach(nc)
+
+# column names of nc 
+cols <- colnames(x = nc)
+
+# converting all character(string) columns into factor columns
+for (idx in 1:length(nc)) {
+  if(assertthat::are_equal(typeof(nc[1, idx]), "character")) { 
+    eval(expr = parse(text =  paste("nc$", cols[idx], " <- as.factor(x = nc$", cols[idx], ")")))
+  }
+}
+
+str(object = nc)
+nc
+
+# Importing required libraries
+pkgs <- c("comprehenr", "leaps", "olsrr")
+install.packages(pkgs, repos = "http://cran.us.r-project.org")
+lapply(pkgs, require, character.only = TRUE)
+
+```
+
+
+## Homework - Due on Wednesday, April 28 by 2pm
+
+1. Explore the data and identify which predictors you would include in the model. Look for possible issues with collinearity. Are there any variables you woud not include? Explain. (hint: notice that the `mature` variable is simply a categorization of the variable `mage`. Hence, we only include `mage` because it contains more information. Check for similar patterns with other variables and exclude them form the analysis. You should end up with 8 predictors in the initial model.)  
+
+**Resp:** 
+Several steps have been sequentially taken to arrive at the final model. Initially, the full model with each available coefficient was constructed and summarized. The features {`mage`, `weeks`, `gained`, `lowbirthweight`, `gender`, `habit`, `whitemom`} were the first to be considered after each achieving a p-value of less than 10%, denoted by the column `Pr(>|t|)` in the summary of the full model. Note that `lowbirthweight` is a categorization of `weight` similar to `mage` and `maturity`, so `lowbirthweight` was left out. The next variance inflation factor (VIF) was computed for each feature in the full model to see if any extreme collinearity exists. Since all features have a VIF of <4, the typical threshold to call for further investigation, no features were immediately dropped. The highest VIF of 2.439011 belongs to `weeks`. However, it is understandable that units of time are usually uncontrolled and are used almost always as an independent variable. As time goes on, other features will show trends, hence the hint of collinearity. Taking a look at the facet grid of plotting variables pairwise, the currently used variables do not show any clear collinearity amongst each other. 
+
+Next, `regsubsets` from the library `olsrr` finds the best model for when constrained to exactly `n` variables. The relevant plot orders the top `n = 10` models by `R^2` along the y-axis and denotes the inclusion of a certain feature by a horizontal black bar. From the plot, models with some of the highest R^2 already contain all the features previously included. Therefore, this verification does not exclude any kept variable so far nor does it support appending new ones.
+
+
+```{r, echo=TRUE}
+
+head(x = nc)
+
+# Pairwise simple linear regression plots
+cat("Pairwise plot between parameters:\n")
+plot(nc, main = "Pairwise Scatterplots Between Features")
+
+# Defining the full model
+nc.formula <- weight ~ mage + weeks + premie + visits + marital + gained + lowbirthweight + gender + habit + whitemom
+nc.lm <- lm(formula = nc.formula, data = nc)
+
+# Coefficient diagnostics
+cat("summary of full model:\n")
+nc.summary_initial <- summary(object = nc.lm)
+nc.summary_initial
+
+# Computing VIF scores
+ols_vif_tol(nc.lm)
+
+# Best models based on number of coefficients kept
+nc.leaps <- regsubsets(x = nc.formula, data = nc, nbest = 10)
+summary(nc.leaps)
+plot(nc.leaps, main = "Kept Features Based on Best Model using n Features", xlabel = "Features", ylabel = "R^2", scale = "r2")
+
+```
+
+
+2. Fit a model including all the variables you chose in question 1 (please fit an additive model i.e no interaction terms). What percentage of variation in birth weight is explained by the model? Is this a good model? Explain. 
+
+**Resp:** 
+With an `R^2` (ratio of SSR to SSTO) of 0.465, barely half of the results in `weight` could be explained by the additive model using the previously selected features. Since less than half the variance in `weight` is explained by the additive components of the model, this model does not have particularly trustworthy prediction ability.
+
+
+```{r, echo=TRUE}
+
+nc.formula_final <- weight ~ mage + weeks + gained + gender + habit + whitemom
+nc.lm_final <- lm(formula = nc.formula_final, data = nc)
+summary(nc.lm_final)
+
+```
+
+
+3. Are there any predictors that are not significant? Is the saturated model with all the predictors the best model? Use backward elimination to find the best model i.e take not significant variables out one at a time (take the variable with highest t-test p-value out first). Justify the choice of your final model both based on the adjusted R-squared and a formal test. (hint: use `anova` to compare models and make your final decision).
+
+**Resp:** 
+There `visits`, `premie`, and `marital` has the top p-values out of all variables. With an adjusted R^2 of 0.06785, the reduced model from backward elimination could not match the currently used final model. Note that the backward elimination produced a formula with one less variable in the model, which may partly explain such a decrease in adjusted R^2. To recall, the current best model has 6 variables and holds an adjusted R^2 value of 0.465. The p-value for the F-statistic from comparing the two models is 2.2e-16, which clearly indicates that the full model (current one) should be used still. The residual sum of squares (RSS) are 1106.8 and 1930.4, respectively, with the lower number belonging to the current model. This further verifies the better prediction ability of the current model relative to the backward elimination-derived one. 
+
+
+
+
+```{r, echo=TRUE}
+
+# Full model diagnostics (every feature is included)
+nc.summary_initial
+pvalues_initial <- as.vector(x = to_vec(expr = for(i in 1:11) nc.summary_initial$coefficients[i, "Pr(>|t|)"]))
+cat("p-values for initial model:\n", pvalues_initial, "\n")
+
+# indexes of pvalues_initial ranking from largest (index 1) to smallest (index 11) p-value
+pv_idx <- order(pvalues_initial, decreasing = TRUE)
+cat("pv_idx:\n", pv_idx, "\n\n")
+
+# column names sorted by corresponding p-value descendingly
+# redundant variables and weight (mature, weight) also removed
+cols_pv_desc <- cols[pv_idx][c(1:3, 5:8)]
+cat("cols_pv_desc:\n", cols_pv_desc, "\n\n")
+
+# backward elimination
+best_r2_adj_BW <- 0
+best_formulaBW <- NULL
+nc.lm_best_BW <- NULL
+for (idx in 1:length(x = cols_pv_desc)) {
+  formulaBW <-  eval(expr = parse(text = paste("weight ~", paste(cols_pv_desc[3:length(x = cols_pv_desc)], collapse = " + "))))
+  nc.lm_BW <- lm(formula = formulaBW, data = nc)
+  nc.summary_BW <- summary(object = nc.lm_BW)
+  
+  if (nc.summary_BW$adj.r.squared > best_r2_adj_BW) {
+    best_r2_adj_BW <- nc.summary_BW$adj.r.squared
+    best_formulaBW <- formulaBW
+    nc.lm_best_BW <- nc.lm_BW
+  }
+}
+
+cat("Best model from backward elimination:\n")
+nc.lm_best_BW
+summary(nc.lm_best_BW)
+cat("nc.lm_best_BW formula:\n")
+best_formulaBW
+
+# comparing original reduced model with backward elimination produced best model
+anova(nc.lm_final, nc.lm_best_BW)
+cat("critical F-value: ", qf(p = 0.95, df1 = 955, df2 = 956), "\n\n")
+
+
+```
+
+4. Ideally we want the regression sum of squares (SS(Regression) in the class notes) to be large relative to the residuals sum of squares (SS(Residuals)). What are the values for SS(Regression) and SS(Residuals) in your final model? (hint: use `anova`). 
+
+**Resp:**
+For the final model, the regression sum of squares is `SSR = 974.9191`, and the residual (error) sum of squares is `SSE = 1106.779`.
+
+```{r, echo=TRUE}
+
+nc.summary_final <- summary(object = nc.lm_final)
+nc.anova_final <- anova(object = nc.lm_final)
+nc.summary_final
+nc.anova_final
+
+SSTO <- var(x = nc$weight) * (nrow(x = nc) - 1)
+cat("SSTO: ", SSTO, "\n")
+
+SSE <- nc.anova_final[7, 2]
+cat("SSE: ", SSE, "\n")
+
+SSR <- SSTO - SSE
+cat("SSR: ", SSR, "\n")
+
+```
+
+5. Is there real predicitve value in the independent variables that you chose? That is, test the hypothesis that all the slopes are zero (hint: check the F-statistic and its p-value). What is the rejection region for this test using a 5% significance level? 
+
+**Resp:** 
+In the summary of the final model, all variables have p-values, given under `Pr(>|t|)`, of less than 1%. In the anova analysis, all variables have probabilities of F-scores, given under `Pr(>F)`, of less than 5%. As seen in the `t value` column of the summary, no t-score in absolute value crosses the critical value of 1.646451 that marks the rejection boundary for the t-test. Therefore, the independent variables chosen for the final model has predictive power.
+
+
+```{r, echo=TRUE}
+
+nc.summary_final
+nc.anova_final
+
+cat("critical t-value: ", qt(p = 0.05, df = 955, lower.tail = FALSE))
+
+```
+
+
+6. Perform an analysis of residuals. Show the respective plots for the analysis (i.e Q-Q plot and plot of predicted values vs residuals). Are there any extreme violations of the model assumptions? Explain.
+
+**Resp:**  
+The QQ plot indicates that the distribution for `weight` may follow a left-skewed Gaussian distribution at best. This violates the assumption that residuals follow a normal distribution.The residuals vs. fitted plot also marks 3 extreme outliers corresponding to indexes of 75, 659, and 667. However, given the tremendous sample size in dataset `nc`, no other outliers suggest that the model fits pretty well. Finally, there is the assumption of homoscedascity. The residuals vs. fitted plot seem to show a small tendency for points to cluster together, leaving lower concentrations of points near the extreme ends. Although the plot is not that evident, variance consistency of residuals across all values taken by the used variables is questionable.
+
+
+```{r, echo=TRUE, out.width = '45%'}
+
+# scroll through each plot
+# first and second are wanted
+plot(nc.lm_final)
+
+```
+
+7. Provide a short interpretation of the partial slopes of your final model in the context of the problem.
+
+**Resp:**
+The partial slopes of the final model each indicate how much would the expected value of `weight` change, and in which direction, given 1 unit change in 1 variable only. The corresponding partial slope for each variable represents that change. By absolute value, the variables and their partial slopes that contribute to the vast majority of the change in expected value of `weight` are as follows: `weeks` (0.330486), `gender` (0.388681), `habit` (-0.400475), `whitemom`  (0.272585). Notice how `habit`, referring to smoking habit, is the only variable with a negative partial slope. With a 1 indicating a smoker, we expect the birth `weight` to decrease due to harmful effects from smoking. On the other hand, `weeks` is simply time; we expect a baby to grow heavier as time passes. The other indicator variables, which have positive partial slopes, indicate a statistical preference for one gender or ethnicity to associate with heavier weights. 

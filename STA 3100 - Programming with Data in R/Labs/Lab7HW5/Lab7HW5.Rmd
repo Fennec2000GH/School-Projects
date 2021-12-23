@@ -1,0 +1,103 @@
+---
+title: "Lab 7 HW 5: Chi-squared Test for Independence"
+author: "Caijun Qin"
+date: "03/24/2021"
+output:
+  html_document:
+    df_print: paged
+  pdf_document: default
+---
+
+### Loading data
+```{r, echo=TRUE}
+nc <- read.csv("nc.csv", header=T)
+attach(nc)
+head(x = nc)
+
+```
+We’ve considered the association between smoking and low birthweight. Now it’s your turn to analyze pairs
+of variables that are of interest to you.
+
+1. Select two categorical variables from this data set that is of interest to you. You will be performing a
+hypothesis test that compares the dependence of these two variables. What is the research question
+you will be answering? What are the null and alternative hypotheses?
+
+Resp: The selected categorical variables are marital status (`marital`) and premature birth (`premie`). The chi-square test will test for statistically significant evidence that marital status has an affect on whether a baby is born prematurely or not. The null hypothesis, H0, states that marital status has no such effect on premature birth. The alternative hypothesis, HA, states the existence of such effect.
+
+2. Conduct an appropriate hypothesis test to evaluate your hypotheses. If the classical test is appropriate
+you should run use both the classical test and the simulation test, otherwise just use the simulation test.
+Include the code you used to run the test(s) and any output that results. Based on these results what
+can you conclude about your hypotheses? If you ran both tests do the results agree with one another?
+
+Resp: Using an alpha-level of 0.05, rejection of H0 occurs when the computed chi-square statistic from the contingency table is greater than 3.841459, which demarcates an area of 0.05 to the right (upper tail) of a chi-square distribution for df = 1. Both the classical test and the simulation test for chi-square produced test statistics (7.0809 and 7.5704) that exceed the critical value. Therefore, both tests agree that H0 is rejected, meaning marital status does have a relationship with premature birth. Alternatively, the p-values computed at the test statistics by each chi-square test (0.007791 and 0.006997) are each smaller than the alpha-level of 0.05.
+
+```{r, echo=TRUE, out.width = '50%'}
+
+# df = (r - 1) * (c - 1) = 1
+# H0 is rejected when the chi-sqaure statistic from each test surpasses the value computed below
+print("critical value: ")
+qchisq(p = 0.05, df = 1, lower.tail = FALSE)
+
+cont_table_1 <- table(marital, premie)
+cont_table_1
+
+# classical test
+chisq.test(cont_table_1, correct = TRUE)
+
+# simulated test
+chisq.test(cont_table_1, correct = TRUE, simulate.p.value = TRUE)
+
+```
+
+3. Repeat parts 1. and 2. for two additional pairs of categorical variables.
+
+Resp: 
+
+The selected categorical variables are maturity of the mother (`mature`) and low birth weight (`lowbirthweight`). The chi-square test will test for statistically significant evidence that maturity status has an affect on whether a baby is born with an abnormally low birth weight or not. The null hypothesis, H0, states that maturity status has no such effect on low birth weight. The alternative hypothesis, HA, states the existence of such effect.
+
+Using an alpha-level of 0.05, rejection of H0 occurs when the computed chi-square statistic from the contingency table is greater than 3.841459, which demarcates an area of 0.05 to the right (upper tail) of a chi-square distribution for df = 1. Both the classical test and the simulation test for chi-square produced test statistics (0.34414 and 0.54151) that fall less than the critical value. Therefore, both tests fail to reject H0, meaning maturity status has no provable effect on low birth weight. Alternatively, the p-values computed at the test statistics by each chi-square test (0.5574 and 0.5512) are each larger than the alpha-level of 0.05.
+
+```{r, echo=TRUE, out.width = '50%'}
+
+# df = (r - 1) * (c - 1) = 1
+# H0 is rejected when the chi-sqaure statistic from each test surpasses the value computed below
+print("critical value: ")
+qchisq(p = 0.05, df = 1, lower.tail = FALSE)
+
+cont_table_2 <- table(mature, lowbirthweight)
+cont_table_2
+
+# classical test
+chisq.test(cont_table_2, correct = TRUE)
+
+# simulated test
+chisq.test(cont_table_2, correct = TRUE, simulate.p.value = TRUE)
+
+
+```
+
+Resp: 
+
+The selected categorical variables are smoking habit (`habit`) and gender (`gender`). The chi-square test will test for statistically significant evidence that being a mother who smokes has an affect on a specific gender the baby is born having. The null hypothesis, H0, states that smoking habit has no such effect on gender. The alternative hypothesis, HA, states the existence of such effect.
+
+Using an alpha-level of 0.05, rejection of H0 occurs when the computed chi-square statistic from the contingency table is greater than 3.841459, which demarcates an area of 0.05 to the right (upper tail) of a chi-square distribution for df = 1. Both the classical test and the simulation test for chi-square produced test statistics (1.2286 and 1.4489) that fall less than the critical value. Therefore, both tests fail to reject H0, meaning smoking habit has no relationship with the gender of the baby. Alternatively, the p-values computed at the test statistics by each chi-square test (0.2677 and 0.2544) are each larger than the alpha-level of 0.05.
+
+```{r, echo=TRUE, out.width = '50%'}
+
+
+# df = (r - 1) * (c - 1) = 1
+# H0 is rejected when the chi-sqaure statistic from each test surpasses the value computed below
+print("critical value: ")
+qchisq(p = 0.05, df = 1, lower.tail = FALSE)
+
+cont_table_3 <- table(habit, gender)
+cont_table_3
+
+# classical test
+chisq.test(cont_table_3, correct = TRUE)
+
+# simulated test
+chisq.test(cont_table_3, correct = TRUE, simulate.p.value = TRUE)
+
+
+```

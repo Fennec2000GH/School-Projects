@@ -1,0 +1,106 @@
+---
+title: 'Lab 7: One-Way Anova'
+author: "Caijun Qin"
+output:
+  html_document: default
+  latex_engine: xelatex
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, fig.align="center", message=FALSE, warning=FALSE)
+```
+
+
+### Tire's Lifetime
+
+Suppose that as a business manager you have the responsibility for testing and comparing the lifetimes of four brands (Apollo, Bridgestone, CEAT and Falken) of automobile tires. The lifetime of these sample observations are measured in mileage run in thousands. For each brand of automobile tire, a sample of 15 observations have been collected. Using this information, you have to recommend the brand or brands with the best performance (if any). The data is provided in the `tire.csv` file. 
+
+To read the data, download it to the same folder where you have your .Rmd file for this lab. Then set your working directory using the `setwd` command and providing the folder path in your computer, or choosing `Set Working Directory` in the `Session` tab in Rstudio:
+
+```{r, echo=TRUE}
+# read data
+tire <- read.csv("tire.csv", header=T)
+
+```
+
+**Exercise 1:** Explore the data and create side-by-side boxplots for the tire brands. Include the mean values in the boxplots. What does the descriptive analysis suggests about the lifetime of the different tire brands?
+
+Resp: The boxplot suggests that each brand of tire has a very different lifetime on average. Remember the units of measuring lifespan is in thousands of miles, so the means could differ about as much as 3000 miles. However, the IQR of any pair of brands is likely to border or even overlap slightly. When comparing the entire range of values overall, any two pairs of brands are 100% guaranteed to overlap.
+
+
+```{r, echo=TRUE, out.width = '50%'}
+
+library(plyr)
+library(dplyr)
+library(ggplot2)
+head(x=tire)
+
+#means_df <- tire %>% group_by(Brands) %>% select(Mileage) %>% summarise(mean = mean(Mileage))
+#means <- means_df$mean
+#cat("means by brand:", means)
+
+means <- ddply(tire, .(Brands), function(df) { return(mean(df$Mileage)) })
+print("mileage mean grouped by brand:")
+print(means)
+
+ggplot(data = tire, title = "Mileage vs. Brand") +
+geom_boxplot(color = "blue") +
+geom_point() +
+aes(x = Brands, y = Mileage, fill = Brands) +
+stat_summary(fun = mean, colour = "green", geom = "point", shape=20, size=5) +
+stat_summary(fun.y = mean, geom = "text", label = means$V1, size = 3, color= "white") +
+xlab(label = "Brands") + ylab(label = "Mileage")
+
+```
+
+**Exercise 2:** Perform a one-way analysis of variance (use the `aov` function) and identify the sum of squares within and between from the anova table. State the null hypothesis we want to test in the context of the problem. Using the F-test and the respective p-value, what do you conclude? 
+
+Resp: SSB is 256.2908 (df = 3), and SSW = 266.6495 (df = 56). The null hypothesis states that there is not statistically significant difference between the means (lifetime) of any two tire brands. The ANOVA table shows that Pr(>F) = 2.78e-08. This means that the area under the F-distribution to the right of the computed F-statistic is in the millionths of a percentage point. Regardless of whether we choose p = 0.05, 0.01, or 0.001, the F-statistic always falls to the right of the critical value. Therefore, we reject the null hypothesis and conclude that there is indeed at least one pair of tire brands with different means in lifetimes not due to chance alone.
+
+```{r, echo=TRUE}
+
+head(x=tire)
+tire_aov <- aov(formula = Mileage ~ Brands, data = tire)
+print("tire_aov:")
+tire_aov
+print("tire_aov summarized:")
+summary(object = tire_aov)
+
+```
+
+**Exercise 3:** Briefly state the assumptions of a completely randomized design. Compute the residuals and check the respective assumptions for the tire data.
+
+Resp: In a completely randomized design, each pair of different samples are pairwise independent, and all samples are random samples. This means that for sample size n, each element eligible to be in the sample has equal probability of being actually selected. One sample does not influence the composition of any other sample. Each sample is selected from a Normal population; plotting a QQ plot of residuals shows that all the points align almost perfectly with the 45-degree line when plotted against theoretical normal quantiles. The Shapiro-Wilks test computed a value of  0.98806, far above the critical value of 0.05, and therefore also affirms normality. The variance of all samples are assumed to be equal.
+
+```{r, echo=TRUE, out.width = '50%'}
+
+# Checking for normality
+shapiro.test(x = tire$Mileage)
+
+mileage_mean <- mean(x = tire$Mileage)
+print("mileage_mean:")
+print(mileage_mean)
+res <- tire$Mileage - mileage_mean
+print("residuals:")
+res
+
+qqnorm(y = res, pch = 16)
+qqline(y = res)
+
+hist(x = res, main = "Residuals Histogram")
+
+```
+
+**Exercise 4:** Perform multiple comparisons of the population means (hint: use `TukeyHSD`) and plot the 95\% confidence intervals for all pairwise differences. Interpret the results. Which tire brand (or brands) would you recommend?
+
+Resp: When considering only absolute differences between means of lifetime for two different brands, CEAT and Apollo have the least difference (very close to 0). On the other hand, the largest absolute difference between any pair of brands is Falken-Bridgestone, with Falken being having the higher mean. Therefore, we can deduce that Falken has the highest lifetime on average (verify with boxplot). From the data, Falken seems to be the best recommendation. 
+
+```{r, echo=TRUE, out.width = '50%'}
+
+tire_tukey <- TukeyHSD(x = tire_aov, conf.level = 0.95)
+print("tukey-kramer test (95% confidence):")
+print(tire_tukey)
+plot(tire_tukey, cex.lab=1, cex.axis=0.4, las=1)
+
+```

@@ -1,0 +1,159 @@
+---
+title: "Lab 2 Homework"
+author: "Caijun Qin"
+date: "02/12/2021"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, fig.align="center", message=FALSE, warning=FALSE)
+library(tidyverse)
+library(openintro)
+library(ggplot2)
+```
+
+**This homework is due on Friday, February 12 2021 by 2pm. Please show all your work and justify your answers.**
+
+1. Create a new data frame that includes flights headed to SFO in February, and save this data frame as `sfo_feb_flights`. How many flights meet these criteria?
+
+There are 68 rows from the filtered tibble meeting the criteria, so 68 flights fit the criteria.
+
+```{r, echo = TRUE, out.width = '55%'}
+
+# ?nycflights
+# head(x = nycflights, n = 10)
+sfo_feb_flights <- nycflights %>% filter(dest == "SFO" & month == 2)
+sfo_feb_flights
+
+```
+
+2. Describe the distribution of the **arrival** delays of these flights using a histogram and appropriate summary statistics. **Hint:** The summary statistics you use should depend on the shape of the distribution.
+
+If we consider all flights (green fill), the density distribution of arrival delay times are quite concentrated around a number right below zero (0). Since there are some extreme outliers as very long arrival delays on the right tail, it is better to use the median of -5 than the mean that is actually positive. The median is also very close, if not equal, to the highest bar in the histogram.In fact, the actual mode statistic (most frequent `arr_delay` value) is -13 with 750 flights making up the bar. When considering only flights destined to SFO (pink fill), there are some scattered outliers but no where as extreme as the entire NYC flight data. The overall shape of the distribution for SFO fllights only is more symmetrical and bell-shaped than the one for all flights. Both the median of -11 and mean of -4.5 are good estimates for the center. 
+
+
+```{r, echo = TRUE, out.width = '55%'}
+
+# head(x = nycflights, n = 10)
+
+cat("\nSummary of arrival delays for all flights:\n")
+summary(object = nycflights$arr_delay)
+cat("\nSummary of arrival delays for flights destined for SFO:\n")
+summary(object = sfo_feb_flights$arr_delay)
+
+# frequency of arrival delays by grouped by minute over all flights
+freq <- nycflights %>% group_by(arr_delay) %>% tally()
+freq
+
+# Computing mode of arr_delay for all flights
+max_freq <- max(freq$n)
+cat("\nmode of arr_delay for all flights:\n", -13)
+cat("\nnumber of flights contributing to the mode:\n", max_freq)
+
+# Plotting histograms for arrival delays
+cat("\nArrival Delays for All Flights:\n")
+ggplot(data = nycflights, aes(x = arr_delay), title = "Arrival Delays for All Flights") + xlab("Arrival Delay (minutes)") + ylab("Frequency") + scale_x_discrete(limits = seq(-50, 400, 50)) + geom_histogram(bins = 100, color = "red", fill = "green")
+
+cat("\nArrival Delays for SFO-Destined Flights:\n")
+ggplot(data = sfo_feb_flights, aes(x = arr_delay), title = "Arrival Delays for SFO-Destined Flights") + xlab("Arrival Delay (minutes)") + ylab("Frequency") + scale_x_discrete(limits = seq(-120, 220, 20)) + geom_histogram(bins = 40, color = "blue", fill = "pink") 
+
+```
+
+3. Calculate the median and interquartile range for `arr_delay`s of flights in the `sfo_feb_flights` data frame, grouped by carrier. Which carrier has the most variable arrival delays?
+
+For the flights destined for SFO in February, both DL and UA carriers are tied with the maximum IQR. However, UA has a much larger variance in arrival delays compared to any other carrier. Therefore, we expect flights using UA to be the most variable when it comes to arrival delays.
+
+```{r, echo = TRUE, out.width = '55%'}
+
+# head(x = nycflights, n = 10)
+carrier_med <- sfo_feb_flights %>% group_by(carrier) %>% summarise(arr_delay_med = median(x = arr_delay))
+carrier_med
+carrier_spread <- sfo_feb_flights %>% group_by(carrier) %>% summarise(arr_delay_iqr = IQR(x = arr_delay), arr_delay_var = var(x = arr_delay))
+carrier_spread
+
+# Finding maximum IQR
+max_iqr <- max(carrier_spread$arr_delay_iqr)
+cat("Maximum arr_delay iqr by any carrier:\n", max_iqr, "\n")
+max_iqr_tibble <- carrier_spread %>% filter(arr_delay_iqr == max_iqr)
+max_iqr_tibble
+cat("Carrier with largest arr_delay IQR:\n", max_iqr_tibble$carrier, "\n")
+
+# Finding maximum variance
+max_var <- max(carrier_spread$arr_delay_var)
+cat("Maximum arr_delay variance by any carrier:\n", max_var, "\n")
+max_var_tibble <- carrier_spread %>% filter(arr_delay_var == max_var)
+max_var_tibble
+cat("Carrier with largest arr_delay variance:\n", max_var_tibble$carrier, "\n")
+
+```
+
+4. Suppose you really dislike departure delays and you want to schedule your travel in a month that minimizes your potential departure delay leaving NYC. One option is to choose the month with the lowest mean departure delay. Another option is to choose the month with the lowest median departure delay. What are the pros and cons of these two choices?
+
+Using the median of `dep_delay` provides a much more accurate measurement of the center of the distribution for delay times for each month than using the mean. This is because extreme outliers in some month can skew or influence the mean much more than the median. On the plus side, the mean would be close to the median if the variance of departure delays is small enough and no outliers exist for a particular month. The mean would also make use all data points in `dep_delay`, while the median is deribed from no more than 2 data points. The mean should be used only with the assurance of no extreme outliers. Overall, the median is a more robust statistic and can be used more loosely even without knowing the IQR or variance of a distribution. From the tibble below with new variables for median and mean od `dep_delay`, it is evident that mean and median are not close together for any month.
+
+```{r, echo = TRUE, out.width = '55%'}
+
+# head(x = nycflights, n = 10)
+nycflights %>% group_by(month) %>% summarise(dep_delay_mean = mean(x = dep_delay), dep_delay_median = median(x = dep_delay))
+
+
+```
+
+
+5. If you were selecting an airport simply based on on time departure percentage, which NYC airport would you choose to fly out of?
+
+Out of the 3 available airports, `LGA` has the lowest relative percentage of departure time. This means that `LGA` tends to have earlier departure times overall in the long run. Using this airport will most likely get you on your flight with 
+less potential for delays than flying later in the day when more people come to the airport.
+
+```{r, echo = TRUE, out.width = '55%'}
+
+# head(x = nycflights, n = 10)
+sum_dep_time <- sum(nycflights$dep_time)
+rel_dep_time <- nycflights %>% group_by(origin) %>% summarise(rel_dep_time = sum(dep_time) / sum_dep_time) %>% arrange(rel_dep_time)
+rel_dep_time
+```
+
+6.  Mutate the data frame so that it includes a new variable that contains the average speed, `avg_speed` traveled by the plane for each flight (in mph).
+    **Hint:** Average speed can be calculated as distance divided by number of hours of travel, and note that `air_time` is given in minutes.
+
+Please see the tibble below with `flight` and `avg_speed` being the first 2 columns.
+
+```{r, echo = TRUE, out.width = '55%'}
+
+# head(x = nycflights, n = 10)
+nyc_avg_speed <- nycflights %>% mutate(avg_speed = distance / (air_time / 60)) %>% select(flight, avg_speed, everything())
+nyc_avg_speed
+
+```
+
+7. Make a scatterplot of `avg_speed` vs. `distance`.
+    Describe the relationship between average speed and distance.
+    **Hint:** Use `geom_point()`.
+
+The average speed follows a roughly positive relationship with distance flown. As the distance becomes greater, the average air speed of a flight tends to be higher. However, the relationship is not exactly linear but rather resembles the portion of a logistic curve when y is above zero (0). This makes realistic sense. When destinations are close, aircrafts do not need to fly so fast and save fuel. For long distance travel, a passenger airliner would likely plateau to a maximum speed; going faster would could render turbulence issues and unsafe flight for the design of the aircraft.
+
+```{r, echo = TRUE, out.width = '55%'}
+
+# head(x = nycflights, n = 10)
+ggplot(data = nyc_avg_speed, title = "Average Speed vs. Distance", aes(x = distance, y = avg_speed)) + xlab("distance (miles)") + ylab("avg_speed (mph)") + geom_point() + geom_smooth()
+  
+```
+
+8.  Replicate the plot shown in **Exercise 8** of Lab 3.
+    **Hint:** The data frame plotted only contains flights from American Airlines, Delta Airlines, and United Airlines, and the points are `color`ed by `carrier`.
+    Once you replicate the plot, determine (roughly) what the cutoff point is for departure delays where you can still expect to get to your destination on time.
+
+In order to not be late on arrival, one of the following scenarios must hold true. (1) both `dep_delay` and `arr_delay` are negative (you arrive super early), (2) `dep_delay` is negative in greater magnitude than `arr_delay` is positive, or (3) `dep_delay` is positive but you arrive early enough such that `arr_delay` is negative with larger magnitude. This whole relationship can be modeled with f(`dep_delay`) = -`dep_delay`, or in short, `f(x) = -x`. Any point exactly on the line would mean perfect timing for arrival, as `dep_delay` and `arr_delay` perfectly cancel each other out. Plotting the linear function (red) over the original scatterplot, we see that the farthest data point still under the line has a corresponding x-value (`dep_delay`) of around 30 minutes or half-hour. 
+
+```{r, echo = TRUE, out.width = '55%'}
+
+# head(x = nycflights, n = 10)
+ex8_data <- nycflights %>% filter(carrier %in% c("AA", "DL", "UA")) %>% select(arr_delay, dep_delay, carrier)
+ex8_data
+ggplot(data = ex8_data) + geom_point(aes(x = dep_delay, y = arr_delay, color = carrier)) + theme(panel.grid.major = element_line(color = "white", size = 1.0), panel.grid.minor = element_line(color = "white", size = 0.5))
+
+ggplot(data = ex8_data) + geom_point(aes(x = dep_delay, y = arr_delay, color = carrier)) + scale_x_continuous(breaks = seq(-50, 1000, 100)) + scale_y_continuous(breaks = seq(-50, 1000, 100)) + theme(panel.grid.major = element_line(color = "white", size = 1.0), panel.grid.minor = element_line(color = "white", size = 0.5)) + stat_function(fun = function (x) -x, color = "red")
+
+```
