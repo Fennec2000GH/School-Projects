@@ -1,0 +1,27 @@
+#    workload distribution: 
+#             1 - exponential; mean is calculated based on System Load
+#             2 - pareto; Workload parameters = alpha and K; alpha > 1, K > 0
+#                 Only alpha is provided in the input file.
+#                 Workload mean is calculated by: System Load / Request Rate
+#                 Parameter K is calculaed using: mean=alpha*K/(alpha-1) 
+#
+Total Requests: 1000000
+Total Time: 1
+#
+# number of requests per second
+Request Rate: 1000.0
+#
+# System Load is with respect to the transmission rate of the FIFO queue
+# for stable queue, load should be in (0,1)
+# the mean of workload of a request is calculated by: System Load / Request Rate
+System Load: 0.9
+#
+# server rate relative to the FIFO transmission rate
+# the sever service time of a request is: workload/Server Rate
+Server Rate: 0.001
+#
+# 1 - EXPONENTIAL; 2 - PARETO
+Workload Distribution: 2
+#
+# Pareto_Alpha > 1. Only useful when the workload distribution is PARETO. 
+Pareto Alpha: 2

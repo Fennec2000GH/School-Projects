@@ -1,0 +1,4 @@
+A toy example of how to use a priority queue for event-driven simulation.
+See Doc/ for documentation.
+
+To run the code: ./main in1 2

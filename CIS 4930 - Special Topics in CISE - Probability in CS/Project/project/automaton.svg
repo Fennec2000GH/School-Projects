@@ -1,0 +1,31 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+
+<svg width="741" height="487" version="1.1" xmlns="http://www.w3.org/2000/svg">
+	<ellipse stroke="black" stroke-width="1" fill="none" cx="70.5" cy="259.5" rx="68" ry="68"/>
+	<text x="16.5" y="265.5" font-family="Times New Roman" font-size="20">New Request</text>
+	<ellipse stroke="black" stroke-width="1" fill="none" cx="70.5" cy="70.5" rx="68" ry="68"/>
+	<text x="6.5" y="76.5" font-family="Times New Roman" font-size="20">Arrive at Queue</text>
+	<ellipse stroke="black" stroke-width="1" fill="none" cx="344.5" cy="417.5" rx="68" ry="68"/>
+	<text x="289.5" y="423.5" font-family="Times New Roman" font-size="20">File Received</text>
+	<ellipse stroke="black" stroke-width="1" fill="none" cx="642.5" cy="70.5" rx="68" ry="68"/>
+	<text x="586.5" y="76.5" font-family="Times New Roman" font-size="20">Depart Queue</text>
+	<polygon stroke="black" stroke-width="1" points="70.5,191.5 70.5,138.5"/>
+	<polygon fill="black" stroke-width="1" points="70.5,138.5 65.5,146.5 75.5,146.5"/>
+	<text x="75.5" y="171.5" font-family="Times New Roman" font-size="20">Not in cache (t + D)</text>
+	<polygon stroke="black" stroke-width="1" points="129.408,293.469 285.592,383.531"/>
+	<polygon fill="black" stroke-width="1" points="285.592,383.531 281.16,375.204 276.164,383.866"/>
+	<text x="212.5" y="329.5" font-family="Times New Roman" font-size="20">In cache (t + S_i / R_c)</text>
+	<polygon stroke="black" stroke-width="1" points="138.5,70.5 574.5,70.5"/>
+	<polygon fill="black" stroke-width="1" points="574.5,70.5 566.5,65.5 566.5,75.5"/>
+	<text x="233.5" y="61.5" font-family="Times New Roman" font-size="20">Queue is empty (t + S_i / R_a)</text>
+	<path stroke="black" stroke-width="1" fill="none" d="M 633.661,137.825 A 367.572,367.572 0 0 1 409.717,398.592"/>
+	<polygon fill="black" stroke-width="1" points="409.717,398.592 418.992,400.317 415.333,391.011"/>
+	<text x="559.5" y="316.5" font-family="Times New Roman" font-size="20">Always (t + S_i / R_c)</text>
+	<polygon stroke="black" stroke-width="1" points="388.803,365.913 598.197,122.087"/>
+	<polygon fill="black" stroke-width="1" points="598.197,122.087 589.192,124.899 596.778,131.414"/>
+	<text x="230.5" y="235.5" font-family="Times New Roman" font-size="20">Queue not empty (t + S_i / R_a)</text>
+	<path stroke="black" stroke-width="1" fill="none" d="M 100.477,320.24 A 51,51 0 1 1 40.523,320.24"/>
+	<text x="10.5" y="433.5" font-family="Times New Roman" font-size="20">Always (t + X)</text>
+	<polygon fill="black" stroke-width="1" points="40.523,320.24 31.776,323.773 39.866,329.651"/>
+</svg>
